@@ -1,0 +1,220 @@
+{
+  "_comment": "win-tune 基线清单。改这里就能换标准，不用动代码。null 表示只报告不判定。",
+  "pagefile": {
+    "expected_entries": [
+      "E:\\pagefile.sys 16384 32768",
+      "C:\\pagefile.sys 2 2"
+    ],
+    "drive_for_expansion": "E:",
+    "note": "C 盘留 2MB 哨兵（不放页面文件但保留设置位），主力放 E"
+  },
+  "visualfx": {
+    "VisualFXSetting": 2,
+    "UserPreferencesMask": "90 12 03 80 10 00 00 00",
+    "FontSmoothing": "2",
+    "note": "2=最佳性能；FontSmoothing 保留 2 否则中文发虚"
+  },
+  "deliveryopt": {
+    "DODownloadMode": 0,
+    "note": "0=仅 HTTP，不做 P2P 上传"
+  },
+  "power": {
+    "lid_action": 0,
+    "sleep_idle_dc": 0,
+    "screensave_active": "0",
+    "screensave_secure": "0",
+    "enable_goodbye": 0,
+    "applies_to": "all_schemes",
+    "note": "合盖不操作(AC/DC) + 电池不闲置睡眠 + 关屏保锁屏 + 关动态锁。本机只支持 S0 现代待机、无 S3，合盖默认就进 Modern Standby，后台任务必断，所以 LIDACTION 必须是 0"
+  },
+  "gpu": {
+    "expected_version": "32.0.101.7092",
+    "expected_date": "2026-09-03",
+    "note": "仅报告。11-14 代核显已进 legacy 分支，升级不再带来性能红利"
+  },
+  "commit_limit_min_gb": 30.0,
+  "commit_limit_note": "低于此值视为额度不足（旧配置为 17.3 GB，实测导致 14 天内 5 次虚拟内存告警）",
+  "protected_services": [
+    "SolidWorks Flexnet Server",
+    "SolidWorksLicensingService",
+    "QQPCRTP",
+    "qmbsrv",
+    "QQPCTray",
+    "26367",
+    "AweSun",
+    "AweSunService",
+    "CodexSandboxService.OpenAI.Codex"
+  ],
+  "optional_services": [
+    "IntelGraphicsSoftwareService"
+  ],
+  "protected_reason": {
+    "SolidWorks Flexnet Server": "许可服务，停掉后 SOLIDWORKS 打不开",
+    "QQPCRTP": "腾讯管家内核防护，本机唯一实时防护（Defender 已被策略关闭）",
+    "qmbsrv": "同上",
+    "QQPCTray": "管家操作界面",
+    "AweSun": "向日葵远程，删了重启后无法连回本机",
+    "CodexSandboxService.OpenAI.Codex": "服务 ACL 受保护，改不动"
+  },
+  "removable_startup_run": [
+    "RTHDVCPL",
+    "Intel® Graphics Software"
+  ],
+  "removable_services_manual": [
+    "DSAService",
+    "DSAUpdateService",
+    "MSSQL$TEW_SQLEXPRESS",
+    "SQLBrowser",
+    "SQLTELEMETRY$TEW_SQLEXPRESS",
+    "SQLWriter"
+  ],
+  "cleanup_targets": [
+    {
+      "id": 1,
+      "name": "传递优化缓存",
+      "path": "C:\\Windows\\ServiceProfiles\\NetworkService\\AppData\\Local\\Microsoft\\Windows\\DeliveryOptimization",
+      "risk": "safe",
+      "measured_mb": 1067.6
+    },
+    {
+      "id": 2,
+      "name": "内核转储 LiveKernelReports",
+      "path": "C:\\Windows\\LiveKernelReports",
+      "risk": "safe",
+      "measured_mb": 1440.0
+    },
+    {
+      "id": 3,
+      "name": "用户临时目录",
+      "path": "%LOCALAPPDATA%\\Temp",
+      "risk": "safe",
+      "measured_mb": 470.9
+    },
+    {
+      "id": 4,
+      "name": "Edge 缓存",
+      "path": "%LOCALAPPDATA%\\Microsoft\\Edge\\User Data\\Default\\Cache",
+      "risk": "safe",
+      "measured_mb": 355.2
+    },
+    {
+      "id": 5,
+      "name": "WorkBuddy 日志",
+      "path": "%USERPROFILE%\\.workbuddy\\logs",
+      "risk": "safe",
+      "measured_mb": 331.4
+    },
+    {
+      "id": 6,
+      "name": "回收站",
+      "path": "C:\\$Recycle.Bin",
+      "risk": "confirm",
+      "measured_mb": 224.1
+    },
+    {
+      "id": 7,
+      "name": "pip 包缓存",
+      "path": "%LOCALAPPDATA%\\pip\\Cache",
+      "risk": "safe",
+      "measured_mb": 122.6
+    },
+    {
+      "id": 8,
+      "name": "缩略图/图标缓存",
+      "path": "%LOCALAPPDATA%\\Microsoft\\Windows\\Explorer",
+      "risk": "safe",
+      "measured_mb": 109.6
+    },
+    {
+      "id": 9,
+      "name": "WorkBuddy 追踪",
+      "path": "%USERPROFILE%\\.workbuddy\\traces",
+      "risk": "safe",
+      "measured_mb": 93.3
+    },
+    {
+      "id": 10,
+      "name": "应用崩溃转储",
+      "path": "%LOCALAPPDATA%\\CrashDumps",
+      "risk": "safe",
+      "measured_mb": 85.6
+    },
+    {
+      "id": 11,
+      "name": "商店应用缓存",
+      "path": "%LOCALAPPDATA%\\Packages",
+      "risk": "confirm",
+      "measured_mb": 51.6
+    },
+    {
+      "id": 12,
+      "name": "WorkBuddy 附件缓存",
+      "path": "%USERPROFILE%\\.workbuddy\\blobs",
+      "risk": "safe",
+      "measured_mb": 38.0
+    },
+    {
+      "id": 13,
+      "name": "Windows 预读取",
+      "path": "C:\\Windows\\Prefetch",
+      "risk": "safe",
+      "measured_mb": 19.1
+    },
+    {
+      "id": 14,
+      "name": "Windows Temp",
+      "path": "C:\\Windows\\Temp",
+      "risk": "safe",
+      "measured_mb": 10.8
+    },
+    {
+      "id": 15,
+      "name": "错误报告队列",
+      "path": "%PROGRAMDATA%\\Microsoft\\Windows\\WER",
+      "risk": "safe",
+      "measured_mb": 9.8
+    },
+    {
+      "id": 16,
+      "name": "WorkBuddy 渲染缓存",
+      "path": "%USERPROFILE%\\.workbuddy\\Cache",
+      "risk": "safe",
+      "measured_mb": 8.4
+    },
+    {
+      "id": 17,
+      "name": "Windows 更新下载残留",
+      "path": "C:\\Windows\\SoftwareDistribution\\Download",
+      "risk": "safe",
+      "measured_mb": 5.3
+    },
+    {
+      "id": 18,
+      "name": "剪贴板历史图",
+      "path": "%USERPROFILE%\\.workbuddy\\clipboard-images",
+      "risk": "safe",
+      "measured_mb": 0.8
+    },
+    {
+      "id": 19,
+      "name": "BITS 下载缓存",
+      "path": "%PROGRAMDATA%\\Microsoft\\Network\\Downloader",
+      "risk": "safe",
+      "measured_mb": 8.8
+    }
+  ],
+  "never_touch": [
+    {
+      "path": "C:\\Windows\\WinSxS",
+      "reason": "只能用 DISM 收，手删会导致组件损坏"
+    },
+    {
+      "path": "C:\\Windows\\Installer",
+      "reason": "删了软件既卸不掉也修不了"
+    },
+    {
+      "path": "C:\\Windows\\ServiceProfiles",
+      "reason": "含系统服务配置"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "_说明": "复制本文件为 config.json 再修改。mode 选 auto（全自动，需 Key）或 manual（半自动，零 Key）。本配置用于「歌词大师一点通」L5 双 AI 互批研讨。",
+
+  "_task字段对应": "title=歌名 / theme=主题(L1) / mood=情绪基调 / audience=目标受众 / length=曲式骨架(L2) / material=可用素材与韵脚约束(L3)。这六项填得越具体，研讨质量越高。",
+
+  "mode": "auto",
+  "max_rounds": 3,
+  "human_rounds": 0,
+  "output_dir": "out",
+
+  "task": {
+    "title": "我辈本是天上仙",
+    "theme": "以李白式的狂放自况，写现代人的困顿与不甘",
+    "mood": "先抑后扬，狂放中带苍凉",
+    "audience": "25-45 岁城市上班族，听国风/民谣",
+    "length": "副歌核心句[4行] → 主歌A1[6行] → 预副歌[2行] → 副歌[4行] → 主歌A2[6行] → 副歌×2[8行]，3 分钟内可唱完",
+    "material": "可使用「长安」「酒」「月」等古典意象与现代场景对照；主歌押言前辙(-an)，副歌押江阳辙(-ang)；主歌每行 7~12 字，副歌每行 ≤10 字"
+  },
+
+  "_task填写提醒": "把上面 task 里的六项换成你自己这首歌的。特别提醒：material 里的韵脚骨架和字数限制必须写清楚——它会被引擎自动写进「约束条件」，那是防 AI 越改越飞的命门。",
+
+  "creator": {
+    "base_url": "https://api.deepseek.com/v1",
+    "api_key": "sk-填你的Key",
+    "model": "deepseek-chat",
+    "temperature": 0.9
+  },
+
+  "critic": {
+    "base_url": "https://ark.cn-beijing.volces.com/api/v3",
+    "api_key": "填你的Key",
+    "model": "doubao-pro-32k",
+    "temperature": 0.3
+  },
+
+  "_常用平台 base_url 速查": {
+    "DeepSeek": "https://api.deepseek.com/v1",
+    "火山方舟(豆包)": "https://ark.cn-beijing.volces.com/api/v3",
+    "通义千问": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "Kimi": "https://api.moonshot.cn/v1",
+    "智谱GLM": "https://open.bigmodel.cn/api/paas/v4",
+    "硅基流动": "https://api.siliconflow.cn/v1",
+    "Ollama本地": "http://127.0.0.1:11434/v1",
+    "LM Studio本地": "http://127.0.0.1:1234/v1"
+  },
+
+  "_选模型建议": {
+    "创作方": "temperature 调高（0.9~1.1），选文笔好的模型",
+    "批评方": "temperature 调低（0.2~0.4），选逻辑严、不爱说好话的模型",
+    "关键": "两边必须用不同平台/不同模型，否则会自我吹捧，研讨沦为走过场"
+  },
+
+  "_安全提醒": "config.json 只放本地，不要提交进技能包或任何公开位置。"
+}

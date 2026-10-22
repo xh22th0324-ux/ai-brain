@@ -1,0 +1,67 @@
+# ai-brain
+
+把「和 AI 聊出来的想法」和「已经跑通的技能」固化成一个**与模型无关的上下文包**。
+换一个 AI、换一台机器，读几个文件就能接着干活，不用重头解释。
+
+## 它解决什么问题
+
+| 常见痛点 | 本仓库的做法 |
+|---|---|
+| 每次换 AI 都要重新交代背景 | `context/PROFILE.md` 一份档案，谁读都懂 |
+| 好想法聊完就散落在对话里 | `context/ideas/` 原子笔记，带标签可检索 |
+| 技能绑在某一个工具里 | `skills/` 统一成 `SKILL.md` + 脚本，任何 AI 可读 |
+| 决策半年后想不起为什么 | `context/decisions/` 强制记录取舍 |
+
+## 快速开始
+
+```bash
+git clone <your-repo-url>
+cd ai-brain
+python scripts/build_manifest.py      # 生成清单
+python scripts/check_secrets.py       # 密钥体检
+```
+
+然后让任意 AI 从 `AGENTS.md` 开始读。
+
+**换 AI 时该怎么开口，见 [`HOW-TO-HANDOFF.md`](HOW-TO-HANDOFF.md)** ——
+里面是可直接复制粘贴的话术，以及为什么会话术比文件更重要。
+
+## 目录
+
+```
+ai-brain/
+├── 00-START-HERE.md     # 给「收到压缩包那一方」看的入口卡
+├── AGENTS.md            # 通用入口，任何 AI 从这里开始
+├── HOW-TO-HANDOFF.md    # 给「我」看的：换 AI 时的开口话术
+├── manifest.json        # 机器可读索引（技能 + 笔记）
+├── context/
+│   ├── PROFILE.md       # 我的背景、偏好、沟通风格
+│   ├── ideas/           # 想法笔记（原子化）
+│   └── decisions/       # 决策记录（含放弃项）
+├── skills/              # 技能包，每个含 SKILL.md
+├── scripts/             # 导出、清单、密钥扫描、打包
+└── .github/workflows/   # 提交即校验
+```
+
+## 添加一条想法
+
+```bash
+cp context/ideas/_template.md context/ideas/2026-10-22-我的想法.md
+# 填 frontmatter + 结论，然后
+python scripts/build_manifest.py
+```
+
+## 添加/更新一个技能
+
+技能源目录保持在原工具里，导出到本仓库：
+
+```bash
+python scripts/export_skills.py            # 全量导出
+python scripts/export_skills.py --only ps5 # 只更新一个
+```
+
+导出时会自动脱敏内网 IP、本机绝对路径、邮箱与已知凭据。
+
+## 许可
+
+私人知识库，默认不授权外部使用。

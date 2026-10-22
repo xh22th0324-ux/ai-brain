@@ -1,0 +1,20 @@
+# 统一换行：仓库内一律 LF。
+# 没有这一行时，Windows 的 core.autocrlf=true 会把工作区检出成 CRLF，
+# 而 GitHub Actions 检出成 LF，两边对文件算哈希/字节数就会不一致，制造假 diff。
+* text=auto eol=lf
+
+# 二进制文件不做任何换行转换
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.zip  binary
+*.rar  binary
+*.7z   binary
+*.gz   binary
+*.pdf  binary
+*.woff binary
+*.woff2 binary
+*.ttf  binary

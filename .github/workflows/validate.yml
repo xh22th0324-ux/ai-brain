@@ -1,0 +1,53 @@
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 密钥与隐私扫描
+        run: python scripts/check_secrets.py
+
+      - name: 检查清单是否已同步
+        # 脚本内部忽略 generated_at，且按 LF 归一化计算指纹，
+        # 因此不会因为时间戳或 Windows/Linux 换行差异误报。
+        run: python scripts/build_manifest.py --check
+
+      - name: 校验技能结构
+        run: |
+          fail=0
+          for d in skills/*/; do
+            if [ ! -f "$d/SKILL.md" ]; then
+              echo "::error file=$d::缺少 SKILL.md"
+              fail=1
+            fi
+          done
+          exit $fail
+
+      - name: 校验笔记 frontmatter
+        run: |
+          python - <<'PY'
+          import pathlib, sys
+          bad = []
+          for p in pathlib.Path("context").rglob("*.md"):
+              if p.name.startswith("_"):
+                  continue
+              text = p.read_text(encoding="utf-8", errors="ignore")
+              if not text.startswith("---"):
+                  bad.append(str(p))
+          if bad:
+              print("以下笔记缺少 frontmatter:")
+              print("\n".join(bad))
+              sys.exit(1)
+          print("frontmatter OK")
+          PY

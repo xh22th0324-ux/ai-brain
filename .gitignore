@@ -1,0 +1,24 @@
+# 构建产物与本地缓存
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+dist/
+build/
+test-output/
+.cache/
+
+# 索引产物（由脚本生成，不入库）
+index/
+
+# 本地私有覆盖（放真实 IP、路径、凭据）
+local/
+*.local.md
+.env
+.env.*
+
+# 系统垃圾
+.DS_Store
+Thumbs.db
+desktop.ini

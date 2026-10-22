@@ -1,0 +1,13 @@
+{
+  "_comment": "self-tune 的预期值清单。null = 只报告、不擅自修改。改这里就能改这台机器的目标配置。",
+  "temp_dir": "E:\\Temp\\WorkBuddy",
+  "local_skills_memory": true,
+  "memory_generate": true,
+  "local_memory": null,
+  "default_workspace": "E:\\WorkBuddy",
+  "locale": "zh-CN",
+  "tone_style": "professional",
+  "sandbox_safety": true,
+  "agent_teams": true,
+  "skills_archive": "\\\\iStoreOS\\games\\skills"
+}

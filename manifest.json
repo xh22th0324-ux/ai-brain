@@ -1,0 +1,217 @@
+{
+  "generated_at": "2026-10-22T23:00:34+08:00",
+  "entry": "AGENTS.md",
+  "profile": "context/PROFILE.md",
+  "counts": {
+    "skills": 16,
+    "ideas": 1,
+    "decisions": 1
+  },
+  "skills": [
+    {
+      "name": "find-skills",
+      "dir": "find-skills",
+      "description": "Helps users discover and install agent skills when they ask questions like \"how do I do X\", \"find a skill for X\", \"is there a skill that can...\", or express interest in extending capabilities. This skill should be used when the user is looking for functionality that might exist as an installable skill.",
+      "path": "skills/find-skills/SKILL.md",
+      "has_scripts": false,
+      "has_references": false,
+      "files": 1,
+      "bytes": 9144,
+      "sha256": "e6f8fb8a884869e4"
+    },
+    {
+      "name": "humanizer",
+      "dir": "humanizer",
+      "description": "Remove signs of AI-generated writing from text. Use when editing or reviewing text to make it sound more natural and human-written. Detects and fixes patterns including: inflated symbolism, promotional language, superficial analyses, vague attributions, em dash overuse, rule of three, AI vocabulary words, negative parallelisms, and excessive conjunctive phrases.",
+      "path": "skills/humanizer/SKILL.md",
+      "has_scripts": false,
+      "has_references": false,
+      "files": 2,
+      "bytes": 20764,
+      "sha256": "eb2d44bb02d10ec9"
+    },
+    {
+      "name": "歌词大师一点通",
+      "dir": "lyric-master",
+      "description": "歌词创作到成片的全程交互式向导。词是主角：L1~L6 把「一个想法」变成「一首能唱、能记住、挑不出结构性毛病」的歌词定稿（含十三辙全表、字数与乐句对齐、AI 味检测清单、4 轮收敛实战实录）；L7 讲定稿的去向与变现（认领词曲收益 / 出售 / 定制单）；L8~L11 讲落地——词怎么变成声音、句子怎么翻成镜头、字幕怎么让字被看见、成片怎么见人。自带两个零依赖脚本：研讨引擎与可唱性体检器。适用于写词的人、做音乐短视频的创作者、接定制词单的写手。",
+      "path": "skills/lyric-master/SKILL.md",
+      "has_scripts": true,
+      "has_references": true,
+      "files": 9,
+      "bytes": 129202,
+      "sha256": "17cbfba57dca45bd"
+    },
+    {
+      "name": "lyric-mv",
+      "dir": "lyric-mv",
+      "description": "从一首 MP3 + 一份歌词原文，做出音画对齐的完整歌词动画 MV（可编辑交付 MP4）。当用户给歌曲/音频并要求配歌词做动画、歌词视频、歌词 MV、音乐短片、lyric video 时使用。覆盖：从音频自动推歌词时间轴、生成场景背景画面、动态歌词排版、ffmpeg 合成整首歌。",
+      "path": "skills/lyric-mv/SKILL.md",
+      "has_scripts": false,
+      "has_references": false,
+      "files": 1,
+      "bytes": 16881,
+      "sha256": "75f426027ca0f676"
+    },
+    {
+      "name": "pptx",
+      "dir": "pptx",
+      "description": ">-",
+      "path": "skills/pptx/SKILL.md",
+      "has_scripts": true,
+      "has_references": true,
+      "files": 20,
+      "bytes": 176007,
+      "sha256": "3b9a3e6dccaed33b"
+    },
+    {
+      "name": "proactive-agent",
+      "dir": "proactive-agent",
+      "description": "Transform AI agents from task-followers into proactive partners that anticipate needs and continuously improve. Now with WAL Protocol, Working Buffer, Autonomous Crons, and battle-tested patterns. Part of the Hal Stack 🦞",
+      "path": "skills/proactive-agent/SKILL.md",
+      "has_scripts": true,
+      "has_references": true,
+      "files": 15,
+      "bytes": 85202,
+      "sha256": "571521d9f6f38b3e"
+    },
+    {
+      "name": "ps5",
+      "dir": "ps5",
+      "description": "PS5 游戏文件转换、U 盘部署与运行期排障工具集。用于 FPKG(.pkg) 转 exFAT/ffpkg/ffpfs/ffpfsc 镜像、镜像反向转回 pkg、游戏文件夹与压缩包解包、镜像结构检查与校验、ShadowMountPlus (SMP) 挂载前的合规检查；也用于排查「镜像/文件夹挂得上、图标也出得来，但游戏启动后崩溃或卡死」——包括读 SMP debug.log 区分 hang 与 crash、通过 FTP 直连主机取日志与读沙箱、Unity/Addressables 资源加载检查、boot.config 显示请求、fakelib 取舍。还用于实测 U 盘/接口吞吐（PS5 前置 USB-A 是 USB 2.0 口，约 37 MB/s；背面 10Gbps 口可到 111 MB/s 以上）判断「游戏加载慢是不是插错口」，以及判断自制载荷（etaHEN / hwinfo / 温度监控）为何一启动就 SIGILL（13.60 官方 etaHEN 不可用，但 ps5-exporter / OnionHEN 已实测能跑）、判读游戏内 CPU/SoC 温度与风扇转速是否正常（如 78 ℃ 算不算过热、要不要清灰）。当用户提到 PS5、FPKG、pkg 转 exfat、外置硬盘/U 盘玩游戏、ShadowMountPlus、转 ffpkg、fakelib/降级补丁、游戏转镜像、CE-108255-1/CE-108264-1、卡在 logo/黑屏无声音、etaHEN、hwinfo、CPU 温度/过热/清灰、debug.log、U 盘速度/插哪个口、NAS/共享游戏库按中文名整理、M.2 扩容选型、主机 IP 变了连不上 等场景时使用。也用于判断某个工具是否支持 .pkg 输入，以及识别 PS4 pkg(7F434E54) 与 PS5 pkg(7F464948) 的区别。",
+      "path": "skills/ps5/SKILL.md",
+      "has_scripts": true,
+      "has_references": true,
+      "files": 14,
+      "bytes": 224525,
+      "sha256": "1379a84776f918da"
+    },
+    {
+      "name": "self-improvement",
+      "dir": "self-improvement",
+      "description": "Captures learnings, errors, and corrections to enable continuous improvement. Use when: (1) A command or operation fails unexpectedly, (2) User corrects Claude ('No, that's wrong...', 'Actually...'), (3) User requests a capability that doesn't exist, (4) An external API or tool fails, (5) Claude realizes its knowledge is outdated or incorrect, (6) A better approach is discovered for a recurring task. Also review learnings before major tasks.",
+      "path": "skills/self-improvement/SKILL.md",
+      "has_scripts": true,
+      "has_references": true,
+      "files": 17,
+      "bytes": 62784,
+      "sha256": "55cb775de57edd8d"
+    },
+    {
+      "name": "self-tune",
+      "dir": "self-tune",
+      "description": "本机 WorkBuddy 与 Windows 环境的「一键体检 + 自动调参」技能。当用户说「把你自己设置一下」「这些选项设置好」「环境体检 / 看看有没有要调的」「缓存目录改到 X 盘」「本地技能与记忆沉淀开了没 / 打开它」「默认工作区换到哪」「沙箱 / Agent Teams 开关」「记忆生成开关」「语气风格」等时使用。它按预期清单逐项比对实际配置（用户级 TEMP/TMP 环境变量、app-config.json、settings.json、技能目录、归档共享），给出差异表，并在确认后一次性改好、自动备份、留变更日志。凡涉及「这台机器该怎么配才对」的重复性问题，优先调用本技能而不是临时手改。",
+      "path": "skills/self-tune/SKILL.md",
+      "has_scripts": true,
+      "has_references": false,
+      "files": 3,
+      "bytes": 19967,
+      "sha256": "87d2454ff5224937"
+    },
+    {
+      "name": "smart-charts",
+      "dir": "smart-charts",
+      "description": "",
+      "path": "skills/smart-charts/SKILL.md",
+      "has_scripts": true,
+      "has_references": true,
+      "files": 23,
+      "bytes": 3081832,
+      "sha256": "33ff3306d0ba09ee"
+    },
+    {
+      "name": "video-creator",
+      "dir": "video-creator",
+      "description": "产品介绍视频自动生成技能。当用户需要生成产品介绍视频、宣传视频、演示视频时、复刻声音时触发。支持：(1) 声音合成——若用户明确指定\"我的\"声音，则复刻声音并用于下次合成；否则自动使用edge-tts合成语音（支持男声/女声选择）；(2) 基于用户提供的图片素材生成静态幻灯片视频（无需大模型生成视频）；(3) 自动生成对应语言的SRT字幕（软字幕/硬字幕/无字幕可选）并与音频同步。（4）复刻声音。（5）口播引导视频：当脚本首段以\"口播：\"开头时，使用真人照片+TTS音频 并生成真人口播片段。适用场景：用户说\"帮我生成产品视频\"、\"制作一个XX的介绍视频\"、\"用我的声音或男声或女声生成视频\"、\"把这些图片做成视频\"、\"生成一段口播视频\"时，务必使用此技能。",
+      "path": "skills/video-creator/SKILL.md",
+      "has_scripts": true,
+      "has_references": true,
+      "files": 9,
+      "bytes": 146734,
+      "sha256": "88fe1860a4539ffc"
+    },
+    {
+      "name": "video-director",
+      "dir": "video-director",
+      "description": "知识类短视频画面规划技能。将枯燥文字转化为高吸引力、高信息密度的图文动画短视频画面，包含名词视觉化和入场动画设计。输出标准JSON格式分镜表供video-producer使用，也可独立使用。",
+      "path": "skills/video-director/SKILL.md",
+      "has_scripts": true,
+      "has_references": false,
+      "files": 3,
+      "bytes": 30215,
+      "sha256": "9bbfd75546547673"
+    },
+    {
+      "name": "video-generation",
+      "dir": "video-generation",
+      "description": "当用户上传图片并要求生成视频、制作视频、把图片做成视频、做一段动态效果时触发。也涵盖如下说法：'用这张图生成一个视频''把这几张图做成视频''帮我做个短视频''图生视频''参考生视频'等，无论是否明确说'生成视频'。",
+      "path": "skills/video-generation/SKILL.md",
+      "has_scripts": false,
+      "has_references": false,
+      "files": 3,
+      "bytes": 23091,
+      "sha256": "d7d0dbe0699f9692"
+    },
+    {
+      "name": "video-producer",
+      "dir": "video-producer",
+      "description": "短视频一键生成技能 v2.2。调用video-director进行画面规划，然后生成AI素材、TTS配音、视频渲染，输出完整MP4。",
+      "path": "skills/video-producer/SKILL.md",
+      "has_scripts": true,
+      "has_references": false,
+      "files": 5,
+      "bytes": 35564,
+      "sha256": "842838a2deb9af65"
+    },
+    {
+      "name": "win-tune",
+      "dir": "win-tune",
+      "description": "Windows 主机「体检 + 提速 + 电源合盖 + 清理 + 启动项治理」技能，面向本机已实测调好的这套配置，也是本机所有系统级调整的登记处。当用户说「电脑怎么更快 / 开机变慢 / 看看还有什么能提速 / 清理 C 盘 / 磁盘满了 / 启动项太多 / 虚拟内存不足 / 页面文件怎么设 / 提交上限不够 / 这个缓存能删吗 / 合盖别睡眠 / 合盖不锁屏 / 关掉锁屏 / 程序要一直跑 / 待机断网 / 电脑方面的设置帮我调一下」等时使用。它按基线清单逐项比对（页面文件、提交上限、视觉特效、传递优化、显卡驱动、电源与合盖、屏保锁屏、注册表自启、第三方自启服务、磁盘余量），输出差异表；并提供启动项全量审计（含按字符码核对的坑）与磁盘可清理项扫描（只报告不删）。所有改动可回退，改前自动备份 + 生成 rollback.ps1。",
+      "path": "skills/win-tune/SKILL.md",
+      "has_scripts": true,
+      "has_references": true,
+      "files": 4,
+      "bytes": 71732,
+      "sha256": "429ee11b0b1b1ebb"
+    },
+    {
+      "name": "zagens-office",
+      "dir": "zagens-office",
+      "description": "凡涉及创建或编辑 Office 文档（.pptx / .docx / .xlsx / .pdf），优先使用本技能。演示文稿/路演/精修 PPT 先 load_skill office-pptx；洗表/拼表走 office-xlsx-data。触发：演示文稿、幻灯片、PPT、公司介绍、路演、报告、提案、表格、电子表格、Word、公式、LaTeX 及各类 Office 文件名。zagens-office 为本机结构化引擎：声明式 JSON 入、schema 校验后秒级出可打开文件。本技能可用时，勿回退去写生成脚本。",
+      "path": "skills/zagens-office/SKILL.md",
+      "has_scripts": true,
+      "has_references": true,
+      "files": 8,
+      "bytes": 43528,
+      "sha256": "ef3f59410c77d00b"
+    }
+  ],
+  "ideas": [
+    {
+      "title": "上下文要比工具活得久",
+      "slug": "2026-10-22-上下文要比工具活得久",
+      "path": "context/ideas/2026-10-22-上下文要比工具活得久.md",
+      "date": "2026-10-22",
+      "tags": [
+        "ai-brain",
+        "方法论",
+        "工具选型"
+      ],
+      "status": "settled"
+    }
+  ],
+  "decisions": [
+    {
+      "title": "批量压缩改在 NAS 容器内执行",
+      "slug": "2026-10-22-nas批量压缩改容器内执行",
+      "path": "context/decisions/2026-10-22-nas批量压缩改容器内执行.md",
+      "date": "2026-10-22",
+      "tags": [
+        "nas",
+        "winrar",
+        "docker",
+        "排障"
+      ],
+      "status": "settled"
+    }
+  ]
+}

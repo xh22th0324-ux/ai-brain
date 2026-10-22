@@ -1,0 +1,36 @@
+name: 歌词大师一点通
+slug: lyric-master
+version: 1.1.0
+description: "Lyric-to-film pipeline where the lyric stays the protagonist. L1-L6 cover the craft: topic selection, song structure, the 13-rhyme system, drafting, two-AI adversarial review (with a verified 4-round case study), and rights archiving and monetization. L7-L11 cover the landing: handing the finished lyric to a composer while recording the actual sung order, an image-to-shot translation table, subtitle design that keeps the words legible, and final assembly with publishing and asset registration. Ships two zero-dependency scripts: a dual-AI review engine (full-auto API mode or zero-key manual mode) and a singability checker that maps line endings to rhyme classes and flags sibilant clusters, closed-vowel endings, reduplication, rare characters and cliché vocabulary. 从一个念头到一条被人看见的成片：以词为轴，上半程打磨（选题 / 骨架 / 韵脚 / 出稿 / 双 AI 互批 / 留证 / 变现），下半程落地（词入声 / 词入画 / 词入轴 / 词成片）。"
+author: 后山人
+category: content-creation
+triggers:
+  - 写歌词
+  - 写词
+  - 作词
+  - 歌词创作
+  - 歌词打磨
+  - 歌词修改
+  - 双AI研讨
+  - 互批
+  - 韵脚
+  - 十三辙
+  - 押韵
+  - AI味
+  - 词曲收益
+  - 可唱性
+  - 词入画
+  - 字幕设计
+  - 歌词成片
+tags:
+  - lyrics
+  - songwriting
+  - lyric-writing
+  - chinese-rhyme
+  - singability-check
+  - ai-cliche-detection
+  - two-ai-review
+  - subtitle-design
+  - shot-translation
+  - content-creation
+  - chinese-poetry

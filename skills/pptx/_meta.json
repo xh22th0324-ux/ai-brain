@@ -1,0 +1,25 @@
+{
+  "name": "pptx",
+  "display_name": "PPT 演示文稿",
+  "display_name_en": "PowerPoint",
+  "description_zh": "创建、读取、编辑 .pptx/.potx 演示文稿：幻灯片、版式、备注与模板。",
+  "description_en": "Creates, reads, and edits .pptx/.potx decks: slides, layouts, speaker notes, and templates.",
+  "category": "document",
+  "version": "1.0.0",
+  "author": "zxh",
+  "emoji": "📊",
+  "color": "#C43E1C",
+  "tags": [
+    "PPT",
+    "pptx",
+    "演示文稿",
+    "幻灯片",
+    "pitch deck",
+    "slides",
+    "presentation"
+  ],
+  "language": [
+    "zh-CN",
+    "en"
+  ]
+}
