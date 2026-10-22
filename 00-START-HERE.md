@@ -25,10 +25,20 @@
 | 作者怎么表达、偏好什么 | `context/PROFILE.md` |
 | 有哪些想法还没落地 | `context/ideas/`（看 `status: draft`） |
 
+## 尖括号有两种，别搞混
+
+| 类型 | 例子 | 正确做法 |
+|---|---|---|
+| **脱敏占位符** | `<PRIVATE_IP>`、`<USER_NAME>`、`<EMAIL>`、`<PASSWORD>`、`<USER_HOME>`、`<AGENT_HOME>`、`<REDACTED>` | 真实值被刻意抹掉了。**不要猜、不要编默认值**，直接向作者索取 |
+| **模板参数** | `<SKILL_DIR>`、`<TITLE_ID>`、`<TID>`、`<NAME>`、`<LABEL>` | 是命令/路径模板里的变量。按当前上下文自己替换（如 `<TITLE_ID>` 换成具体游戏的 title id），拿不到具体值再问 |
+
+分不清时按这个判据：**名字是"敏感概念"（IP/密码/姓名/路径）→ 脱敏；名字是"业务变量"（ID/目录/名字槽）→ 模板。**
+
 ## 脱敏声明
 
-文中出现的 `<PRIVATE_IP>`、`<USER_HOME>`、`<EMAIL>`、`<PASSWORD>`、`<USER_NAME>`
-都是**占位符**，真实值不在包内。需要时请直接向作者索取，**不要猜、不要编默认值**。
+文中出现的 `<PRIVATE_IP>`、`<USER_HOME>`、`<AGENT_HOME>`、`<EMAIL>`、`<PASSWORD>`、
+`<USER_NAME>`、`<REDACTED>` 都是**占位符**，真实值不在包内。需要时请直接向作者索取，
+**不要猜、不要编默认值**。
 
 ---
 
@@ -37,4 +47,7 @@
 This is a personal cross-model context pack. Read `AGENTS.md` then `context/PROFILE.md`.
 Do **not** read all files — use `manifest.json` to locate the one skill you need.
 Tokens like `<PRIVATE_IP>` / `<USER_HOME>` are redaction placeholders; ask the author
-for real values instead of guessing.
+for real values instead of guessing. Note there are **two kinds** of angle brackets:
+redaction placeholders (`<PRIVATE_IP>`, `<PASSWORD>`, `<USER_NAME>`) must be asked for,
+while template variables (`<SKILL_DIR>`, `<TITLE_ID>`, `<NAME>`) should be filled in
+from context by yourself.

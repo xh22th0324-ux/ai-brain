@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-22T23:00:34+08:00",
+  "generated_at": "2026-10-22T23:07:06+08:00",
   "entry": "AGENTS.md",
   "profile": "context/PROFILE.md",
   "counts": {
@@ -55,7 +55,7 @@
     {
       "name": "pptx",
       "dir": "pptx",
-      "description": ">-",
+      "description": "Use for anything touching .pptx/.potx: create decks and pitch decks, read and extract slide content and speaker notes, edit, combine, and work with templates and layouts. 凡是涉及 .pptx 或 .potx 的任务都用它：创建幻灯片与路演稿、读取与抽取内容（含备注）、编辑与合并、使用模板与版式，输出可直接使用的演示文稿。 触发词 / Trigger words：做 PPT、幻灯片、演示文稿、slides、deck、presentation、pptx、pitch deck",
       "path": "skills/pptx/SKILL.md",
       "has_scripts": true,
       "has_references": true,
@@ -110,7 +110,7 @@
     {
       "name": "smart-charts",
       "dir": "smart-charts",
-      "description": "",
+      "description": "将数据文件（CSV/TSV/TXT/XLSX/XLS/JSON）转化为独立交互式 ECharts HTML 图表——32 类图表、3 套主题，全离线无需 CDN。出图前可先取数据画像（--profile：每列 dtype/基数/缺失/样本/统计、实体粒度、候选洞察信号、疑似非数据行），让 agent 在用户没说想看什么时自己读懂数据并决定出什么图——哪列是 ID、哪列是维度、出什么图，全部由 agent 从画像的客观事实自行判断，技能不代笔；每张图内置事实卡（plot_stats + data_preview），其数值是解读时唯一可引用的数字。本技能负责出图与算事实，不产出书面报告或叙事文档。触发：用户提供或指向表格数据文件并要求出图；提到「画图/出图/可视化/生成图表/generate a chart/make a graph」；想把表格渲染成交互式 HTML 图表。不触发：要的是书面报告、叙事分析或幻灯片；没有数据文件；需要后端的仪表盘；图片/音频/视频等非表格内容。",
       "path": "skills/smart-charts/SKILL.md",
       "has_scripts": true,
       "has_references": true,

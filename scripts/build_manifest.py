@@ -39,7 +39,19 @@ def normalize(data: bytes) -> bytes:
     return data.replace(b"\r\n", b"\n")
 
 
+BLOCK_MARKS = {">", ">-", ">+", "|", "|-", "|+"}
+
+
 def read_frontmatter(path: Path) -> dict:
+    """解析 SKILL.md 的 YAML frontmatter。
+
+    只支持本仓库实际用到的子集，但必须正确处理 YAML 的块标量：
+        description: >-        折叠块，多行合并成一行（空格连接）
+        description: |         字面块，保留换行
+    早先的实现逐行按 ':' 切口，会把 `>-` 本身当成描述，导致索引里
+    两个技能的 description 变成 ">-" 和空串 —— 索引也就失去了意义。
+    这里不引入 PyYAML，避免给 CI 增加依赖。
+    """
     meta: dict = {}
     try:
         text = path.read_text(encoding="utf-8", errors="ignore")
@@ -50,18 +62,51 @@ def read_frontmatter(path: Path) -> dict:
     parts = text.split("---", 2)
     if len(parts) < 3:
         return meta
-    for line in parts[1].splitlines():
+
+    lines = parts[1].splitlines()
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        i += 1
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        # 缩进行属于上一个键的块标量，已在上一步消费掉
+        if line[0].isspace():
+            continue
         if ":" not in line:
             continue
         k, v = line.split(":", 1)
         k, v = k.strip(), v.strip()
         if not k:
             continue
+
+        if v in BLOCK_MARKS:
+            # 收集后续所有比当前键缩进更深的行
+            block = []
+            while i < len(lines):
+                nxt = lines[i]
+                if nxt.strip() and not nxt[0].isspace():
+                    break
+                block.append(nxt.strip())
+                i += 1
+            joiner = " " if v.startswith(">") else "\n"
+            meta[k] = joiner.join(x for x in block if x).strip()
+            continue
+
         if v.startswith("[") and v.endswith("]"):
             meta[k] = [x.strip() for x in v[1:-1].split(",") if x.strip()]
         else:
             meta[k] = v.strip('"').strip("'")
     return meta
+
+
+def pick_description(meta: dict) -> str:
+    """description 缺失时回退到本地化字段，保证索引里没有空描述。"""
+    for key in ("description", "description_zh", "description_en"):
+        val = meta.get(key)
+        if isinstance(val, str) and val.strip():
+            return val.strip()
+    return ""
 
 
 def dir_stats(p: Path) -> tuple[int, int]:
@@ -100,7 +145,7 @@ def collect() -> dict:
             skills.append({
                 "name": meta.get("name", d.name),
                 "dir": d.name,
-                "description": meta.get("description", ""),
+                "description": pick_description(meta),
                 "path": f"skills/{d.name}/SKILL.md",
                 "has_scripts": (d / "scripts").is_dir(),
                 "has_references": (d / "references").is_dir(),
