@@ -64,6 +64,13 @@ def main(argv: list[str] | None = None) -> int:
             print("\n密钥扫描未通过，已中止打包。先修掉上面列出的问题。", file=sys.stderr)
             return 1
         print()
+        # 刷新单文件版，避免包里带着过期的 HANDOFF-SINGLE.md
+        try:
+            import make_single
+            make_single.main()
+        except Exception as e:                       # noqa: BLE001
+            print(f"生成单文件版失败（包仍会继续打，但可能过期）: {e}", file=sys.stderr)
+        print()
 
     files = list(iter_files(REPO))
     if args.list:

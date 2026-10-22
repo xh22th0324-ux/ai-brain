@@ -23,6 +23,17 @@ jobs:
         # 因此不会因为时间戳或 Windows/Linux 换行差异误报。
         run: python scripts/build_manifest.py --check
 
+      - name: 检查单文件版是否已同步
+        # HANDOFF-SINGLE.md 由脚本生成。改过 PROFILE / AGENTS / 技能描述后
+        # 忘记重跑 make_single.py，粘贴出去的就是旧内容。
+        run: |
+          python scripts/make_single.py
+          if ! git diff --quiet HANDOFF-SINGLE.md; then
+            echo "::error::HANDOFF-SINGLE.md 与源文件不一致，请本地运行 python scripts/make_single.py 后提交"
+            git diff --stat HANDOFF-SINGLE.md
+            exit 1
+          fi
+
       - name: 校验技能结构
         run: |
           fail=0

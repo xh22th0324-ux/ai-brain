@@ -26,20 +26,25 @@ python scripts/check_secrets.py       # 密钥体检
 **换 AI 时该怎么开口，见 [`HOW-TO-HANDOFF.md`](HOW-TO-HANDOFF.md)** ——
 里面是可直接复制粘贴的话术，以及为什么会话术比文件更重要。
 
+**对方读不到文件时，用 [`HANDOFF-SINGLE.md`](HANDOFF-SINGLE.md)** ——
+整包压成的一页纸（约 3300 字符），直接粘进对话即可。
+实测最高频的失败不是"话说不清"，而是"文件根本没送到"。
+
 ## 目录
 
 ```
 ai-brain/
 ├── 00-START-HERE.md     # 给「收到压缩包那一方」看的入口卡
+├── HANDOFF-SINGLE.md    # 单文件版（生成物）：粘进对话即可，不依赖上传
 ├── AGENTS.md            # 通用入口，任何 AI 从这里开始
-├── HOW-TO-HANDOFF.md    # 给「我」看的：换 AI 时的开口话术
+├── HOW-TO-HANDOFF.md    # 给「我」看的：投递路线 + 开口话术
 ├── manifest.json        # 机器可读索引（技能 + 笔记）
 ├── context/
 │   ├── PROFILE.md       # 我的背景、偏好、沟通风格
 │   ├── ideas/           # 想法笔记（原子化）
 │   └── decisions/       # 决策记录（含放弃项）
 ├── skills/              # 技能包，每个含 SKILL.md
-├── scripts/             # 导出、清单、密钥扫描、打包
+├── scripts/             # 导出、清单、密钥扫描、单文件、打包
 └── .github/workflows/   # 提交即校验
 ```
 
