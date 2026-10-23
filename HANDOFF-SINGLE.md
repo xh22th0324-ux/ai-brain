@@ -100,8 +100,9 @@ python3 skills/graphify/run.py --command report --path <TARGET_DIR>
 | 工具 | 作用 |
 |---|---|
 | `zip_each` | 批量单独压缩：指定目录下的每个文件，各自压成一个独立的压缩包。 |
+| `cron_sleep` | 用 cron + hdparm -y 实现空闲休眠 |
 | `hdd_sleep_diag` | iStoreOS / OpenWrt 外挂硬盘休眠体检 |
-| `set_sleep` | 设置并固化外挂硬盘的空闲休眠时间 |
+| `verify_sleep` | 快速验证 hdparm -S 是否真的生效 |
 
 ---
 
