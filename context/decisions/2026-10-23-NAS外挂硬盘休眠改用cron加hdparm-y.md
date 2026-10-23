@@ -129,6 +129,22 @@ if [ 空闲 >= 阈值 ]; then hdparm -y "/dev/$DEV"; fi
   `tools/cron_sleep.sh`（实现）
 - 已停用：`hd-idle` 服务（stop + disable）；已移除 `rc.local` 里的 `hdparm -S` 块
 
+### 部署后在机器上的实际状态（便于以后核对）
+
+| 项 | 值 |
+|---|---|
+| 空闲阈值 | 120 分钟 |
+| 检查间隔 | 5 分钟（实际入睡 120~125 分钟） |
+| 监控脚本 | `/usr/bin/disk-sleep-check.sh` |
+| cron 行 | `*/5 * * * * /usr/bin/disk-sleep-check.sh`（在 `/etc/crontabs/root`） |
+| 状态文件 | `/tmp/.disksleep.state`（`<I/O次数> <时间戳>`，重启清空） |
+| 执行动作 | `hdparm -y` |
+| 已停用 | `hd-idle`（stop + disable）、`rc.local` 的 SETSLEEP 块 |
+| 备份 | `/etc/rc.local.bak.*` 若干份，改前的原始版本 |
+
+**不需要重启**：cron 任务写入即生效，`crond` 已在运行，
+`/etc/init.d/cron enable` 已保证开机自启。
+
 ## 顺带解开的疑点
 
 `734 / 8760 = 8.4%` —— 这块盘 **91.6% 的时间在 standby**，而 SMART 通电计时在
