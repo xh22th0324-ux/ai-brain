@@ -23,6 +23,17 @@ python scripts/check_secrets.py       # 密钥体检
 
 然后让任意 AI 从 `AGENTS.md` 开始读。
 
+### 唯一必装技能：`graphify`
+
+[`skills/graphify`](skills/graphify/SKILL.md) 是**指定必装**的一项，其余技能按需选装。
+代码知识图谱，零依赖（纯标准库）、不联网、不需要 API key。
+交给别的 AI 时，要求它先装这个再干别的：
+
+```bash
+python3 skills/graphify/run.py --selftest    # 12 项全过才继续
+python3 skills/graphify/run.py --command report --path <目标目录>
+```
+
 **换 AI 时该怎么开口，见 [`HOW-TO-HANDOFF.md`](HOW-TO-HANDOFF.md)** ——
 里面是可直接复制粘贴的话术，以及为什么会话术比文件更重要。
 
@@ -43,7 +54,7 @@ ai-brain/
 │   ├── PROFILE.md       # 我的背景、偏好、沟通风格
 │   ├── ideas/           # 想法笔记（原子化）
 │   └── decisions/       # 决策记录（含放弃项）
-├── skills/              # 技能包，每个含 SKILL.md
+├── skills/              # 技能包，每个含 SKILL.md（graphify 为唯一必装）
 ├── tools/               # 随包小工具：拿来就跑，与仓库本身无关
 ├── scripts/             # 导出、清单、密钥扫描、单文件、打包
 └── .github/workflows/   # 提交即校验

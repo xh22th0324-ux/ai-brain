@@ -119,6 +119,29 @@ def main() -> int:
     A("---")
     A("")
 
+    # 1.5) 唯一必装技能
+    # 技能表把十几项平铺在一起，读者看不出哪个是必装 —— 必须单独点出来，
+    # 并明说「文件不在你手上」，否则它会去找不存在的 skills/graphify 路径。
+    A("## 先装这个（唯一必装）")
+    A("")
+    A("`graphify` 是我指定的**唯一必装技能**，其余技能按需选装。作用：一条命令给出一个")
+    A("代码库的结构（文件 / 函数 / 调用边），省掉通读源码。**零依赖**——纯 Python 标准库，")
+    A("不用 pip、不用 API key、不联网。")
+    A("")
+    A("文件不在你手上，需要时向我要 `skills/graphify/`（39 KB，5 个文本文件）。")
+    A("拿到后先自检，12 项全过才继续：")
+    A("")
+    A("```bash")
+    A("python3 skills/graphify/run.py --selftest                             # 12 项全过才继续")
+    A("python3 skills/graphify/run.py --command report --path <TARGET_DIR>")
+    A("```")
+    A("")
+    A("只接受 `--command` / `--path` / `--output`，位置参数会报错；")
+    A("只有 `.py` 是完整分析（含调用边），`.jsx/.tsx/.c/.cpp` 只能数行数。")
+    A("")
+    A("---")
+    A("")
+
     # 2) 技能清单
     A(f"## 我有什么能力（{len(skills)} 个技能）")
     A("")

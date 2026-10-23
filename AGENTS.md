@@ -10,11 +10,42 @@
 
 ---
 
-## 上手顺序（3 步，别跳）
+## 上手顺序（4 步，别跳）
 
-1. 读本文件（你在读）
-2. 读 `context/PROFILE.md` — 我的背景与沟通偏好
-3. 按任务查 `manifest.json` → 命中技能则读 `skills/<name>/SKILL.md`
+**第 1 步是装技能，做完再往下读。**
+
+### 1. 装 `graphify`（唯一必装）
+
+这是本仓库里**唯一被我指定为「必装」的技能**，其余技能一律按需选装。
+
+理由：接手陌生代码库时，最快的办法不是通读源码，而是先拿到它的结构（文件、函数、调用边）。
+`graphify` 一条命令给出这个结构，正好承接本仓库「不要通读」的原则。
+它**零依赖**——纯 Python 标准库，不用 `pip`、不用 API key、不联网。
+
+| 你的环境 | 怎么装 |
+|---|---|
+| 有技能目录的宿主（WorkBuddy 等） | 复制 `skills/graphify/` 到宿主技能目录，如 `~/.workbuddy/skills/graphify` |
+| Claude Code / Codex CLI / Gemini CLI | 不用装，直接 `python3 skills/graphify/run.py …` |
+| 只拿到单文件说明、没有仓库文件 | 向作者索取这个目录（39 KB，5 个文本文件） |
+
+```bash
+python3 skills/graphify/run.py --selftest                            # 12 项全过才继续
+python3 skills/graphify/run.py --command report --path <TARGET_DIR>  # 建立结构认知
+```
+
+三条实测提醒（不是推测，踩过）：
+
+1. 只接受 `--command` / `--path` / `--output`，**位置参数必报错**。`SKILL.md` 开头的
+   「实测用法」节已覆盖上游文档里那套不存在的 `graphify init/index` 命令
+2. 真正的自检是 `run.py --selftest`；目录里的 `selftest.py` 自身有 bug，只报 `2/8 通过` 是假警报
+3. 只有 `.py` 是完整分析（含调用边）；`.js/.ts/.go/.rs/.java` 仅符号与 import；
+   `.jsx/.tsx/.c/.cpp` 只能数行数——**别拿它给 C/C++ 出结构图**
+
+### 2. 读本文件（你在读）
+
+### 3. 读 `context/PROFILE.md` — 我的背景与沟通偏好
+
+### 4. 按任务查 `manifest.json` → 命中技能则读 `skills/<name>/SKILL.md`
 
 **不要**通读整个仓库。按需检索，避免浪费上下文窗口。
 
@@ -24,6 +55,7 @@
 
 | 你要做的事 | 先看 |
 |---|---|
+| 接手陌生代码库、先摸清结构 | 先装 `graphify`（见上「第 1 步」） |
 | 查我有什么技能可用 | `manifest.json` 的 `skills` 数组 |
 | 做视频 / 歌词 / MV | `skills/lyric-master`、`skills/lyric-mv`、`skills/video-producer` |
 | 做 PPT / Word / Excel | `skills/pptx`、`skills/zagens-office` |

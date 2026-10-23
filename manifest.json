@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-10-23T10:05:53+08:00",
+  "generated_at": "2026-10-23T11:39:15+08:00",
   "entry": "AGENTS.md",
   "profile": "context/PROFILE.md",
   "counts": {
-    "skills": 16,
+    "skills": 17,
     "ideas": 1,
     "decisions": 1,
     "tools": 1
@@ -19,6 +19,17 @@
       "files": 1,
       "bytes": 9144,
       "sha256": "e6f8fb8a884869e4"
+    },
+    {
+      "name": "graphify",
+      "dir": "graphify",
+      "description": "将代码、文档、SQL结构转化为可查询的知识图谱，实现智能问答与可视化分析。",
+      "path": "skills/graphify/SKILL.md",
+      "has_scripts": true,
+      "has_references": false,
+      "files": 5,
+      "bytes": 35564,
+      "sha256": "9c31399d340207ad"
     },
     {
       "name": "humanizer",

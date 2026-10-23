@@ -95,7 +95,9 @@ def copy_tree(src: Path, dst: Path, dry: bool) -> tuple[int, int, int]:
             subs += n
             if not dry:
                 d.parent.mkdir(parents=True, exist_ok=True)
-                d.write_text(new, encoding="utf-8")
+                # 显式 LF：write_text 默认用 os.linesep，Windows 上会写成 CRLF，
+                # 与 Linux 的 CI 产出不一致（manifest.json 早先踩过同一个坑）。
+                d.write_text(new, encoding="utf-8", newline="\n")
             written += 1
     return written, skipped, subs
 
