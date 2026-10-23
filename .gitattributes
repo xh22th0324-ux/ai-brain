@@ -3,12 +3,15 @@
 # 而 GitHub Actions 检出成 LF，两边对文件算哈希/字节数就会不一致，制造假 diff。
 * text=auto eol=lf
 
-# 例外：Windows 脚本必须是 CRLF。
-# cmd.exe 解析 LF-only 的 .bat 时会吞掉行首字符，报「'ned' 不是内部或外部命令」
-# （实际是 `if not defined` 被截断）。这一条不能省，否则 clone 下来直接跑不了。
-*.bat text eol=crlf
-*.cmd text eol=crlf
-*.ps1 text eol=crlf
+# 例外：Windows 脚本必须原样保留 CRLF，所以标 binary（不做任何换行转换）。
+# 不能用 eol=crlf —— 那只是「检出时转 CRLF」，仓库里存的仍是 LF，
+# 而 GitHub 网页的 Download ZIP 直接导出 blob、不跑 checkout 转换，
+# 下载下来就是 LF 版，cmd 解析会吞掉行首字符（报「'ned' 不是内部或外部命令」）。
+# binary 的代价是 diff 不可读，这些文件小且极少改，可以接受。
+*.bat binary
+*.cmd binary
+# .ps1 不在此列：PowerShell 能正常读 LF，且仓库里已有技能脚本是 LF，
+# 一并转 CRLF 只会制造一堆不可读的 Bin diff。
 
 # 二进制文件不做任何换行转换
 *.png  binary
