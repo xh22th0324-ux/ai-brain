@@ -100,6 +100,8 @@ python3 skills/graphify/run.py --command report --path <TARGET_DIR>
 | 工具 | 作用 |
 |---|---|
 | `zip_each` | 批量单独压缩：指定目录下的每个文件，各自压成一个独立的压缩包。 |
+| `hdd_sleep_diag` | iStoreOS / OpenWrt 外挂硬盘休眠体检 |
+| `set_sleep` | 设置并固化外挂硬盘的空闲休眠时间 |
 
 ---
 
