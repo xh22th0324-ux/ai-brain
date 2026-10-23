@@ -1,14 +1,14 @@
 ---
 name: win-tune
-description: Windows 主机「体检 + 提速 + 电源合盖 + 清理 + 启动项治理」技能，面向本机已实测调好的这套配置，也是本机所有系统级调整的登记处。当用户说「电脑怎么更快 / 开机变慢 / 看看还有什么能提速 / 清理 C 盘 / 磁盘满了 / 启动项太多 / 虚拟内存不足 / 页面文件怎么设 / 提交上限不够 / 这个缓存能删吗 / 合盖别睡眠 / 合盖不锁屏 / 关掉锁屏 / 程序要一直跑 / 待机断网 / 电脑方面的设置帮我调一下」等时使用。它按基线清单逐项比对（页面文件、提交上限、视觉特效、传递优化、显卡驱动、电源与合盖、屏保锁屏、注册表自启、第三方自启服务、磁盘余量），输出差异表；并提供启动项全量审计（含按字符码核对的坑）与磁盘可清理项扫描（只报告不删）。所有改动可回退，改前自动备份 + 生成 rollback.ps1。
-description_zh: Windows 体检/提速/电源合盖/清理/启动项治理：页面文件、视觉特效、合盖不睡、关锁屏、自启项、磁盘空间，一键比对与安全修正
-version: 1.1.0
+description: Windows 主机「体检 + 提速 + 电源合盖 + 锁屏/黑屏 + 清理 + 启动项治理」技能，面向本机已实测调好的这套配置，也是本机所有系统级调整的登记处。当用户说「电脑怎么更快 / 开机变慢 / 看看还有什么能提速 / 清理 C 盘 / 磁盘满了 / 启动项太多 / 虚拟内存不足 / 页面文件怎么设 / 提交上限不够 / 这个缓存能删吗 / 合盖别睡眠 / 合盖不锁屏 / 关掉锁屏 / 不自动锁屏 / 别自动锁屏 / 多少分钟不操作黑屏 / 屏幕多久黑 / 唤醒要密码 / 程序要一直跑 / 待机断网 / 电脑方面的设置帮我调一下」等时使用。它按基线清单逐项比对（页面文件、提交上限、视觉特效、传递优化、显卡驱动、电源与合盖、唤醒是否需要密码、显示器超时、屏保锁屏、注册表自启、第三方自启服务、磁盘余量），输出差异表；并提供启动项全量审计（含按字符码核对的坑）与磁盘可清理项扫描（只报告不删）。所有改动可回退，改前自动备份 + 生成 rollback.ps1。
+description_zh: Windows 体检/提速/电源合盖/锁屏黑屏/清理/启动项治理：页面文件、视觉特效、合盖不睡、关自动锁屏、显示器超时、自启项、磁盘空间，一键比对与安全修正
+version: 1.2.0
 agent_created: true
 ---
 
-# win-tune — Windows 体检 · 提速 · 电源合盖 · 清理 · 启动项治理
+# win-tune — Windows 体检 · 提速 · 电源合盖 · 锁屏黑屏 · 清理 · 启动项治理
 
-一句话：**先量（只读），再判（分档），再改（可回退）**。这个技能里沉淀的是 2026-10-20 在这台机器上逐项实测过的配置与踩坑，不是通用模板。
+一句话：**先量（只读），再判（分档），再改（可回退）**。这个技能里沉淀的是 2026-10-20 / 2026-10-23 在这台机器上逐项实测过的配置与踩坑，不是通用模板。
 
 **这也是本机所有系统级调整的唯一登记处**：以后凡是改 Windows 设置（电源、合盖、锁屏、显示、页面文件、启动项、服务、清理策略……），都写进这里的 `references/changes-YYYY-MM-DD.md` + `config/baseline.json`，不要另开新技能。
 
@@ -22,6 +22,8 @@ agent_created: true
 | 「虚拟内存不足 / 页面文件怎么设」 | `audit --only pagefile,commit` → 给容量规划 → `apply --pagefile 16384 32768 --yes` |
 | 「视觉特效 / 传递优化 / 这些系统项设好」 | `apply --visualfx --deliveryopt --yes` |
 | 「合盖别睡眠 / 合盖不锁屏 / 程序要一直跑 / 下载别断」 | `audit --only power` → `apply --power-nosleep --yes` |
+| 「别自动锁屏 / 我需要锁屏自己手动锁」 | `audit --only power` 看「唤醒时需密码」是不是 否；`apply --power-nosleep --yes`（改 `consolelock=0`） |
+| 「多少分钟不动就黑屏 / 屏幕多久黑」 | 改 `config/baseline.json` 的 `power.display_off_idle_ac/dc`（秒）→ `apply --power-nosleep --yes` |
 | 「待机后唤不醒 / 待机断网」 | `audit --only power`，看是不是在 S0 现代待机上；见下面「合盖与电源」 |
 | 「改完没生效」 | 看下面「生效条件」，八成是没重启 |
 
@@ -56,6 +58,8 @@ python <SKILL_DIR>/scripts/win_tune.py apply --pagefile 16384 32768 --yes
 | `deliveryopt` | HKLM `...\DeliveryOptimization\Config` | `DODownloadMode=0` | 只走 HTTP，不对上传（P2P） |
 | `power` | `PowerSchemes\<方案>\SUB_BUTTONS\LIDACTION` | `0` 不采取任何操作（AC + DC，**全部电源方案**） | 本机只支持 S0 现代待机、无 S3，合盖默认就进 Modern Standby，后台任务必断 |
 | `power` | `PowerSchemes\<方案>\SUB_SLEEP\STANDBYIDLE` | DC `0`（从不） | 电池下 5 分钟就睡，长时间任务照样断 |
+| `power` | `PowerSchemes\<方案>\SUB_NONE\0e796bdb-…`（**隐藏**，只能 `powercfg /qh` 读） | `0` 否（AC + DC，**全部电源方案**） | 这就是「不自动锁屏」的唯一开关：值=1 时屏幕一黑就上锁。2026-10-23 定 |
+| `power` | `PowerSchemes\<方案>\SUB_VIDEO\3c0bc021-…` | AC/DC `900`（15 分钟） | 15 分钟不动黑屏；**只黑屏不上锁**，靠上面那条配合 |
 | `power` | HKCU `Control Panel\Desktop` | `ScreenSaveActive=0`、`ScreenSaverIsSecure=0` | 屏保勾起「恢复时显示登录屏幕」= 变相锁屏 |
 | `power` | HKLM `Winlogon\EnableGoodbye` | `0` | 动态锁：手机一离开蓝牙范围就锁屏 |
 | `gpu` | DriverStore | 记录版本 `32.0.101.7092`（2026-09-03） | 只报告不驱动升级：11–14 代核显已进 legacy 分支 |
@@ -70,11 +74,28 @@ python <SKILL_DIR>/scripts/win_tune.py apply --pagefile 16384 32768 --yes
 - 唯一可靠解法是把合盖动作设为 `0`，而不是去调「唤醒方式」。
 
 `apply --power-nosleep` 做的事（写全部电源方案，最后 `/setactive SCHEME_CURRENT` 让它立即生效）：
-`LIDACTION` AC/DC → 0、`STANDBYIDLE` DC → 0、屏保关、`EnableGoodbye` → 0。
+`LIDACTION` AC/DC → 0、`STANDBYIDLE` DC → 0、屏保关、`EnableGoodbye` → 0、
+`CONSOLELOCK` AC/DC → 0、`VIDEOIDLE` AC/DC → 基线值（当前 900 秒）。
+
+## 黑屏 ≠ 锁屏：两件事分开调
+
+这两个需求经常被混在一起，实际是**两个独立设置**，而且分属不同子组：
+
+| 想要的效果 | 设置 | 别名 / GUID | 读法 |
+|---|---|---|---|
+| 屏幕 X 分钟后黑掉（省电） | `VIDEOIDLE` | `SUB_VIDEO` / `3c0bc021-c8a8-4e07-a973-6b14cbcb2b7e` | `powercfg /q` 能看 |
+| 黑屏后回来**不要**密码（不锁屏） | `CONSOLELOCK` | `SUB_NONE` / `0e796bdb-100d-47d6-a2d5-f7d2daa51f51` | **隐藏**，只能 `powercfg /qh` |
+
+所以「屏幕可以黑，但别锁屏」= `VIDEOIDLE=900` + `CONSOLELOCK=0`。
+只改前者会表现为「一黑屏就要输密码」，只改后者会表现为「永不黑屏」。
+
+⚠️ `CONSOLELOCK=0` 的代价必须讲清楚：机器实际处于**未锁定**状态，
+只是屏幕断电。任何人碰键盘都能进桌面。要离开就 `Win + L` 手动锁。
 
 坑：`powercfg` 的输出是 **OEM 代码页（中文 = cp936）**，Python 用 `text=True` 会按 UTF-8 解、
 `errors="ignore"` 直接把中文吃光，只剩空格。所以本技能用 `_run_text()` 按 utf-8→cp936→mbcs 顺序试解码，
 解析睡眠状态时也优先用语言无关的注册表 `Power\CsEnabled`。
+解析 `/qh` 输出时**不认中文标签**，只按「`0x` 十六进制值出现顺序取末尾两个」——末尾正好是 AC、DC。
 
 ## 启动项治理：哪些能删、哪些绝对别碰
 
@@ -111,7 +132,8 @@ python <SKILL_DIR>/scripts/win_tune.py apply --pagefile 16384 32768 --yes
 2. **视觉特效**：HKCU 立即写，Explorer 重启后整体生效（注销或重启）。
 3. **显卡驱动**：安装器返回码不可信（实测 233 但实际成功），只认 `Win32_VideoController.DriverVersion` + PnP `Status=OK`。
 4. **服务改手动**：立即生效，不用重启。
-5. **合盖 / 电源 / 屏保 / 动态锁**：立即生效（脚本末尾会 `/setactive SCHEME_CURRENT` 重载当前方案）。改完让用户合一次盖验证。
+5. **合盖 / 电源 / 屏保 / 动态锁 / 唤醒密码 / 显示器超时**：全部立即生效（脚本末尾会 `/setactive SCHEME_CURRENT` 重载当前方案）。改完让用户合一次盖、或等一次黑屏验证。
+   注意**不用重启**，但**要重载方案**；只写值不 `/setactive`，有时要等切换方案才看出来。
 
 ## 本机环境铁律（这几条是踩出来的，别重复踩）
 
@@ -123,6 +145,12 @@ python <SKILL_DIR>/scripts/win_tune.py apply --pagefile 16384 32768 --yes
 | `os.remove` 删了但空间没涨 | 实际进了回收站。补 `SHEmptyRecycleBinW(None,None,1\|2\|4)` |
 | `rd /s /q` 在用户目录 rc=5 | 被拒。用户目录批量删只能靠用户自己双击 .bat |
 | `powercfg` 输出中文全变空格 | 输出是 OEM 代码页（中文 cp936），`text=True` 按 UTF-8 解、`errors=ignore` 会把中文吃光。用 `_run_text()` 按 utf-8→cp936→mbcs 试解 |
+| `powercfg /SETxxxVALUEINDEX` 返回 rc=0 但值没变 | **rc=0 只代表命令被接受**。必须用 `/qh` 回读「当前交流/直流电源设置索引」才算数 |
+| 在 `PowerSchemes\<方案>\<组>\0e796bdb-…` 找不到 CONSOLELOCK | 该设置带 SECURITYDESCRIPTOR，值不在 PowerSchemes 树里（整棵树都搜不到），存 SECURITY 库。`winreg` 读不到 ≠ 没写进去 |
+| `powercfg /q` 看不到「唤醒时需要密码」 | 隐藏设置，必须 `/qh` |
+| `powercfg /qh <方案> 7516b95f-…` 只回 19 字节用法提示 | 子组只认**别名** `SUB_VIDEO` / `SUB_NONE`，不认组 GUID。读注册表才用 GUID |
+| 只改了当前方案，切到别的方案又锁屏 | 电源设置**按方案存**。`apply` 必须遍历 `all_schemes()` |
+| `wmic path Win32_Battery` 报 WinError 5 | `wmic.exe` 在 Program Blacklist 里。判电池用 ctypes `kernel32.GetSystemPowerStatus`，看 `BatteryFlag != 128` |
 | 「合盖后程序断了 = 锁屏没设好」 | 错。先 `powercfg /a` 看有没有 S3；只有 S0 的机器合盖直接进 Modern Standby，改锁屏一律无效 |
 | 按名字找不到某个 Run 项 | 键名可能带**前导空格**（实测 `QQPCTray`）或 `®` 等字符。按字符码核对 |
 | 注册表 Run 项看漏 | 必须查**四个位置**：HKLM / HKLM-WOW64 / HKCU / HKCU-WOW64。Intel 那条在 WOW64 分支 |
@@ -138,8 +166,10 @@ python <SKILL_DIR>/scripts/win_tune.py apply --pagefile 16384 32768 --yes
 ## 安全边界
 
 - `audit` / `startup` / `cleanup` 三个命令**只读**，不改任何东西。
-- `apply` 只写：HKCU 视觉特效、HKLM 传递优化、HKLM 页面文件、电源方案（`powercfg` 写 `PowerSchemes` 下的 AC/DC 索引）、
-  HKCU 屏保三项、HKLM `Winlogon\EnableGoodbye`。**不碰服务、不碰启动项、不删文件**。
+- `apply` 只写：HKCU 视觉特效、HKLM 传递优化、HKLM 页面文件、电源方案（`powercfg` 写 `PowerSchemes` 下的
+  `LIDACTION` / `STANDBYIDLE` / `CONSOLELOCK` / `VIDEOIDLE` 的 AC/DC 索引，遍历全部方案）、
+  HKCU 屏保三项、HKLM `Winlogon\EnableGoodbye`。**不碰服务、不碰启动项、不删文件**，
+  **不碰睡眠/休眠超时**（`STANDBYIDLE` 的 AC 和 `HIBERNATEIDLE` 保持原样）。
 - 改前把原值快照到 `<workspace>\_wintune_backup-<时间戳>\`，并生成 `rollback.ps1`（电源类会按方案逐个还原 AC/DC）。
 - 现有配置与基线不一致且用户没确认时，只报差异，不擅自"修正"。
 
@@ -150,7 +180,8 @@ win-tune/
 ├── SKILL.md                       # 本文件
 ├── config/baseline.json           # 目标值清单，改这里就能换标准
 ├── scripts/win_tune.py            # audit / startup / cleanup / apply
-└── references/changes-2026-10-20.md   # 2026-10-20 全部改动的完整台账
+├── references/changes-2026-10-20.md   # 2026-10-20 全部改动的完整台账（清理 + 提速 + 合盖）
+└── references/changes-2026-10-23.md   # 2026-10-23 关闭自动锁屏 + 显示器 15 分钟黑屏
 ```
 
 改标准（比如页面文件想设 8–16 GB）只需编辑 `config/baseline.json`，不用动代码。

@@ -21,11 +21,14 @@
   "power": {
     "lid_action": 0,
     "sleep_idle_dc": 0,
+    "consolelock": 0,
+    "display_off_idle_ac": 900,
+    "display_off_idle_dc": 900,
     "screensave_active": "0",
     "screensave_secure": "0",
     "enable_goodbye": 0,
     "applies_to": "all_schemes",
-    "note": "合盖不操作(AC/DC) + 电池不闲置睡眠 + 关屏保锁屏 + 关动态锁。本机只支持 S0 现代待机、无 S3，合盖默认就进 Modern Standby，后台任务必断，所以 LIDACTION 必须是 0"
+    "note": "合盖不操作(AC/DC) + 电池不闲置睡眠 + 唤醒不要密码 + 显示器 15 分钟黑屏 + 关屏保锁屏 + 关动态锁。本机只支持 S0 现代待机、无 S3，合盖默认就进 Modern Standby，后台任务必断，所以 LIDACTION 必须是 0。consolelock=0 是「不自动锁屏」的唯一开关（2026-10-23 定），副作用是屏幕黑了以后谁碰键盘都能直接进桌面，离开久时要手动 Win+L。display_off_idle_* 设 null 表示只报告不判定"
   },
   "gpu": {
     "expected_version": "32.0.101.7092",

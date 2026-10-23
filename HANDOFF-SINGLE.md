@@ -87,7 +87,7 @@ python3 skills/graphify/run.py --command report --path <TARGET_DIR>
 | `video-director` | 知识类短视频画面规划技能。将枯燥文字转化为高吸引力、高信息密度的图文动画短视频画面，包含名词视觉化和入场动画设计。输出标准JSON格式分镜表供video-producer使用，也可独立使用。 |
 | `video-generation` | 当用户上传图片并要求生成视频、制作视频、把图片做成视频、做一段动态效果时触发。也涵盖如下说法：'用这张图生成一个视频''把这几张图做成视频''帮我做个短视频''图生视频''参考生视频'等，无论是否明确说'生成视频'。 |
 | `video-producer` | 短视频一键生成技能 v2.2。调用video-director进行画面规划，然后生成AI素材、TTS配音、视频渲染，输出完整MP4。 |
-| `win-tune` | Windows 体检/提速/电源合盖/清理/启动项治理：页面文件、视觉特效、合盖不睡、关锁屏、自启项、磁盘空间，一键比对与安全修正 |
+| `win-tune` | Windows 体检/提速/电源合盖/锁屏黑屏/清理/启动项治理：页面文件、视觉特效、合盖不睡、关自动锁屏、显示器超时、自启项、磁盘空间，一键比对与安全修正 |
 | `zagens-office` | 专门为高频使用 PPT / XLSX / DOCX / PDF 的人员准备的技能，内置 Office 引擎，可快速生成、编写、修改各种原生 PPT / XLSX / DOCX / PDF 文档。 |
 
 ---

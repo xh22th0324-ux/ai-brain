@@ -59,6 +59,14 @@ if _extra:
         if len(_s) >= 4:
             RULES.append((re.compile(re.escape(_s)), "<REDACTED>"))
 
+# 本机账户名：上面几条规则只吃「路径里的账户名」，正文里裸写的账户名会漏。
+# 曾出过事故——`changes-2026-10-20.md` 已手工改成 `<USER_NAME>`（已脱敏），
+# 一次 export 又把它改回真名。这里按当前环境变量动态生成规则，往后不会复发。
+# 注意顺序：必须在路径规则**之后**，否则 `C:\Users\X` 里的 X 会先被单独替换。
+_user = (os.environ.get("USERNAME") or os.environ.get("USER") or "").strip()
+if len(_user) >= 3:
+    RULES.append((re.compile(rf"(?<![\w.-]){re.escape(_user)}(?![\w.-])"), "<USER_NAME>"))
+
 
 def sanitize(text: str) -> tuple[str, int]:
     hits = 0

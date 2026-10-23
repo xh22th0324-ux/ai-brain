@@ -49,6 +49,12 @@ SUB_BUTTONS = "4f971e89-eebd-4455-a8de-9e59040e7347"     # 电源按钮和盖子
 LIDACTION = "5ca83367-6e45-459f-a27b-476b1d01c936"       # 合上盖子时
 SUB_SLEEP = "238c9fa8-0aad-41ed-83f4-97be242c8f20"       # 睡眠
 STANDBYIDLE = "29f6c1db-86da-48c5-9fdb-f2b67b1f44da"     # 睡眠之后（闲置多久睡）
+HIBERNATEIDLE = "9d7815a6-7ee4-497e-8888-515a05f02364"   # 休眠之后（闲置多久休眠）
+SUB_VIDEO = "7516b95f-f776-4464-8c99-403798f61111"       # 显示（GUID，读注册表用）
+SUB_VIDEO_ALIAS = "SUB_VIDEO"                            # powercfg 只认别名，不认组 GUID
+VIDEOIDLE = "3c0bc021-c8a8-4e07-a973-6b14cbcb2b7e"       # 在此时间后关闭显示
+SUB_NONE = "SUB_NONE"                                    # 无子组（含隐藏设置）
+CONSOLELOCK = "0e796bdb-100d-47d6-a2d5-f7d2daa51f51"     # 唤醒时需要密码
 WINLOGON_KEY = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon"
 POWER_KEY = r"SYSTEM\CurrentControlSet\Control\Power"
 # 0=不操作 1=睡眠 2=休眠 3=关机（部分机型另有 4=关闭显示器）
@@ -386,6 +392,56 @@ def _scheme_vals(scheme: str, sub: str, setting: str) -> tuple[int | None, int |
     return ac, dc
 
 
+def _hex_after(text: str, guid: str) -> list[int]:
+    """在 /qh 输出里定位 guid 那一块，按出现顺序取出所有 0x 十六进制值。
+    每块的结构固定是「可能的设置索引 / 可能的设置友好名称」若干对，
+    最后两行是「当前交流电源设置索引」「当前直流电源设置索引」，
+    所以取末尾两个即为 AC、DC —— 这样不用认中文标签，也不怕换语言。"""
+    lines = (text or "").splitlines()
+    start = -1
+    for i, l in enumerate(lines):
+        if guid in l.lower():
+            start = i
+            break
+    if start < 0:
+        return []
+    vals = []
+    for l in lines[start + 1:]:
+        ls = l.strip()
+        # 下一块开始就收手
+        if ls.lower().startswith("电源设置 guid") or ls.lower().startswith("power setting guid"):
+            break
+        if guid in ls.lower():
+            continue
+        for m in re.findall(r"0x([0-9a-fA-F]{1,8})", ls):
+            vals.append(int(m, 16))
+    return vals
+
+
+def powercfg_setting(scheme: str, sub_alias: str, setting: str,
+                     sub_guid: str = "") -> tuple[int | None, int | None]:
+    """读某个电源设置的 AC/DC 索引，返回 (ac, dc)。
+
+    为什么直连 powercfg 而不是像 _scheme_vals 那样读注册表：
+    CONSOLELOCK 带 SECURITYDESCRIPTOR 属性，值存在 SECURITY 库而非
+    `PowerSchemes\\<方案>\\<组>\\<设置>` 下（实测两个方案都搜不到这个子键），
+    普通管理员用 winreg 读只会得到「未设置」。必须解析 `powercfg /qh`。
+    另外该设置是**隐藏**的，`/q` 看不到，必须带 h。
+
+    sub_alias 传 `SUB_VIDEO` / `SUB_NONE` 这类**别名**；powercfg 不认
+    `7516b95f-...` 这种组 GUID（实测返回 rc=1、输出 19 字节的用法提示）。
+    """
+    vals = _hex_after(_run_text(["powercfg", "/qh", scheme, sub_alias], 25), setting)
+    if len(vals) >= 2:
+        return vals[-2], vals[-1]
+    if len(vals) == 1:
+        return vals[0], vals[0]
+    # 兜底：注册表（VIDEOIDLE 这类普通设置确实存在注册表里）
+    if sub_guid:
+        return _scheme_vals(scheme, sub_guid, setting)
+    return None, None
+
+
 class _POWER_STATUS(ctypes.Structure):
     _fields_ = [("ACLineStatus", wintypes.BYTE),
                 ("BatteryFlag", wintypes.BYTE),
@@ -429,8 +485,12 @@ def probe_power() -> dict:
     for g in all_schemes():
         lid_ac, lid_dc = _scheme_vals(g, SUB_BUTTONS, LIDACTION)
         slp_ac, slp_dc = _scheme_vals(g, SUB_SLEEP, STANDBYIDLE)
+        cl_ac, cl_dc = powercfg_setting(g, SUB_NONE, CONSOLELOCK)
+        vi_ac, vi_dc = powercfg_setting(g, SUB_VIDEO_ALIAS, VIDEOIDLE, SUB_VIDEO)
         schemes[g] = {"lid_ac": lid_ac, "lid_dc": lid_dc,
-                      "sleep_ac": slp_ac, "sleep_dc": slp_dc}
+                      "sleep_ac": slp_ac, "sleep_dc": slp_dc,
+                      "consolelock_ac": cl_ac, "consolelock_dc": cl_dc,
+                      "videoidle_ac": vi_ac, "videoidle_dc": vi_dc}
     cur = schemes.get(sg, {})
     return {
         "active_scheme": sg,
@@ -439,6 +499,10 @@ def probe_power() -> dict:
         "lid_dc": cur.get("lid_dc"),
         "sleep_ac": cur.get("sleep_ac"),
         "sleep_dc": cur.get("sleep_dc"),
+        "consolelock_ac": cur.get("consolelock_ac"),
+        "consolelock_dc": cur.get("consolelock_dc"),
+        "videoidle_ac": cur.get("videoidle_ac"),
+        "videoidle_dc": cur.get("videoidle_dc"),
         "screensave_active": reg_read("HKCU", DESKTOP_KEY, "ScreenSaveActive"),
         "screensave_secure": reg_read("HKCU", DESKTOP_KEY, "ScreenSaverIsSecure"),
         "screensave_timeout": reg_read("HKCU", DESKTOP_KEY, "ScreenSaveTimeOut"),
@@ -709,6 +773,46 @@ def cmd_audit(args) -> int:
             diffs.append({"item": "power:屏幕保护", "current": f"Active={ss_v}",
                           "expected": "Active=0"})
 
+        # 唤醒时需要密码 —— 自动锁屏的真正开关，隐藏设置，只能从 powercfg /qh 读
+        cl_exp = exp.get("consolelock")
+        cl_ac, cl_dc = pw.get("consolelock_ac"), pw.get("consolelock_dc")
+        if cl_ac is None and cl_dc is None:
+            rows.append(("唤醒时需密码", "读取失败", "（用 powercfg /qh 复查）", "未知"))
+        else:
+            cl_ok = True if cl_exp is None else (
+                cl_ac == cl_exp and cl_dc == cl_exp)
+            yn = {0: "否", 1: "是"}
+            rows.append(("唤醒时需密码", f"AC={yn.get(cl_ac, cl_ac)}",
+                         f"DC={yn.get(cl_dc, cl_dc)}",
+                         "OK" if cl_ok else "差异"))
+            if not cl_ok:
+                diffs.append({"item": "power:唤醒时需密码",
+                              "current": f"AC={cl_ac} DC={cl_dc}",
+                              "expected": f"AC=DC={cl_exp}"})
+
+        # 关闭显示器超时（黑屏时间）
+        def _secs(v):
+            if v is None:
+                return "?"
+            if v == 0:
+                return "从不"
+            return f"{v // 60}分" if v % 60 == 0 else f"{v}秒"
+
+        vi_ac, vi_dc = pw.get("videoidle_ac"), pw.get("videoidle_dc")
+        vi_ea, vi_ed = exp.get("display_off_idle_ac"), exp.get("display_off_idle_dc")
+        if vi_ac is not None or vi_dc is not None:
+            vi_ok = True
+            if vi_ea is not None:
+                vi_ok = vi_ok and vi_ac == vi_ea
+            if vi_ed is not None:
+                vi_ok = vi_ok and vi_dc == vi_ed
+            rows.append(("关闭显示器", f"AC={_secs(vi_ac)}", f"DC={_secs(vi_dc)}",
+                         "OK" if vi_ok else "差异"))
+            if not vi_ok:
+                diffs.append({"item": "power:关闭显示器",
+                              "current": f"AC={vi_ac} DC={vi_dc}",
+                              "expected": f"AC={vi_ea} DC={vi_ed}"})
+
         gb_v = pw["enable_goodbye"]
         gb_ok = (gb_v in (0, None))
         rows.append(("动态锁", f"EnableGoodbye={gb_v}", "（0=关）", "OK" if gb_ok else "差异"))
@@ -914,8 +1018,15 @@ def cmd_apply(args) -> int:
         plan.append(f"页面文件 → {args.pagefile[0]}–{args.pagefile[1]} MB（重启生效）")
     if "power" in tasks:
         snapshot["power"] = probe_power()
+        _pexp = base.get("power", {})
         plan.append("合盖 → 不采取任何操作（AC/DC）")
         plan.append("闲置睡眠 → 从不（电池）；屏保锁屏/动态锁 → 关闭")
+        if _pexp.get("consolelock") is not None:
+            plan.append(f"唤醒时需密码 → {'是' if int(_pexp['consolelock']) else '否'}"
+                        f"（AC/DC，{len(all_schemes())} 个电源方案全覆盖）")
+        if _pexp.get("display_off_idle_ac") is not None:
+            plan.append(f"关闭显示器 → AC {_pexp['display_off_idle_ac']}s"
+                        f" / DC {_pexp.get('display_off_idle_dc') or 0}s")
         plan.append("  写入全部电源方案，并重新激活当前方案")
 
     (bk / "before.json").write_text(json.dumps(snapshot, ensure_ascii=False, indent=2),
@@ -969,6 +1080,9 @@ def cmd_apply(args) -> int:
         exp = base.get("power", {})
         lid = int(exp.get("lid_action", 0))
         sleep_dc = int(exp.get("sleep_idle_dc", 0))
+        cl = exp.get("consolelock")
+        vi_ac = exp.get("display_off_idle_ac")
+        vi_dc = exp.get("display_off_idle_dc")
         targets = all_schemes() or [active_scheme()]
         rcs = []
         for g in targets:
@@ -977,6 +1091,15 @@ def cmd_apply(args) -> int:
             rcs.append(powercfg(["/setacvalueindex", g, SUB_BUTTONS, LIDACTION, str(lid)]))
             rcs.append(powercfg(["/setdcvalueindex", g, SUB_BUTTONS, LIDACTION, str(lid)]))
             rcs.append(powercfg(["/setdcvalueindex", g, SUB_SLEEP, STANDBYIDLE, str(sleep_dc)]))
+            if cl is not None:
+                rcs.append(powercfg(["/setacvalueindex", g, SUB_NONE, CONSOLELOCK, str(int(cl))]))
+                rcs.append(powercfg(["/setdcvalueindex", g, SUB_NONE, CONSOLELOCK, str(int(cl))]))
+            if vi_ac is not None:
+                rcs.append(powercfg(["/setacvalueindex", g, SUB_VIDEO_ALIAS, VIDEOIDLE,
+                                     str(int(vi_ac))]))
+            if vi_dc is not None:
+                rcs.append(powercfg(["/setdcvalueindex", g, SUB_VIDEO_ALIAS, VIDEOIDLE,
+                                     str(int(vi_dc))]))
         # 让人改完立刻生效：重新激活当前方案
         powercfg(["/setactive", "SCHEME_CURRENT"])
 
@@ -1048,6 +1171,18 @@ def _rollback_script(snap: dict) -> str:
             if v.get("sleep_dc") is not None:
                 lines.append(f"powercfg /setdcvalueindex {g} {SUB_SLEEP} {STANDBYIDLE} "
                              f"{v['sleep_dc']}")
+            if v.get("consolelock_ac") is not None:
+                lines.append(f"powercfg /setacvalueindex {g} {SUB_NONE} {CONSOLELOCK} "
+                             f"{v['consolelock_ac']}")
+            if v.get("consolelock_dc") is not None:
+                lines.append(f"powercfg /setdcvalueindex {g} {SUB_NONE} {CONSOLELOCK} "
+                             f"{v['consolelock_dc']}")
+            if v.get("videoidle_ac") is not None:
+                lines.append(f"powercfg /setacvalueindex {g} {SUB_VIDEO_ALIAS} {VIDEOIDLE} "
+                             f"{v['videoidle_ac']}")
+            if v.get("videoidle_dc") is not None:
+                lines.append(f"powercfg /setdcvalueindex {g} {SUB_VIDEO_ALIAS} {VIDEOIDLE} "
+                             f"{v['videoidle_dc']}")
         lines.append("powercfg /setactive SCHEME_CURRENT")
         for reg, val in (("ScreenSaveActive", pw.get("screensave_active")),
                          ("ScreenSaverIsSecure", pw.get("screensave_secure"))):
