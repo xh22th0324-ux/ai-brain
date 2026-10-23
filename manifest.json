@@ -1,11 +1,12 @@
 {
-  "generated_at": "2026-10-22T23:37:39+08:00",
+  "generated_at": "2026-10-23T10:05:53+08:00",
   "entry": "AGENTS.md",
   "profile": "context/PROFILE.md",
   "counts": {
     "skills": 16,
     "ideas": 1,
-    "decisions": 1
+    "decisions": 1,
+    "tools": 1
   },
   "skills": [
     {
@@ -183,6 +184,18 @@
       "files": 8,
       "bytes": 43528,
       "sha256": "ef3f59410c77d00b"
+    }
+  ],
+  "tools": [
+    {
+      "name": "zip_each",
+      "path": "tools/zip_each.py",
+      "summary": "批量单独压缩：指定目录下的每个文件，各自压成一个独立的压缩包。",
+      "launchers": [
+        "tools/zip_each.bat"
+      ],
+      "bytes": 20144,
+      "sha256": "bcb07ac5d4be58fd"
     }
   ],
   "ideas": [

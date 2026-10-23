@@ -44,9 +44,14 @@ ai-brain/
 │   ├── ideas/           # 想法笔记（原子化）
 │   └── decisions/       # 决策记录（含放弃项）
 ├── skills/              # 技能包，每个含 SKILL.md
+├── tools/               # 随包小工具：拿来就跑，与仓库本身无关
 ├── scripts/             # 导出、清单、密钥扫描、单文件、打包
 └── .github/workflows/   # 提交即校验
 ```
+
+`skills/`、`scripts/`、`tools/` 的分工：技能讲**怎么做**，`scripts/` 维护**这个仓库**，
+`tools/` 是**删掉仓库也照样能用**的独立脚本（目前有 `zip_each` 批量单独压缩，
+见 [`tools/README.md`](tools/README.md)）。
 
 ## 添加一条想法
 

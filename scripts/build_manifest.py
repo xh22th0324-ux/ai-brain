@@ -20,6 +20,7 @@ Output schema:
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import json
 import os
@@ -131,6 +132,24 @@ def digest(path: Path) -> str:
         return ""
 
 
+def py_summary(path: Path) -> str:
+    """取模块 docstring 的第一行非空文本作为用途摘要。
+
+    用 ast 静态解析，**绝不 import 执行** —— tools/ 下是能直接跑的脚本，
+    导入它们会在生成清单时产生副作用。
+    """
+    try:
+        tree = ast.parse(path.read_text(encoding="utf-8", errors="replace"))
+    except (SyntaxError, OSError, ValueError):
+        return ""
+    doc = ast.get_docstring(tree) or ""
+    for line in doc.splitlines():
+        line = line.strip()
+        if line:
+            return line
+    return ""
+
+
 def collect() -> dict:
     """扫描仓库，生成清单（不含写盘副作用）。"""
     skills = []
@@ -172,6 +191,33 @@ def collect() -> dict:
                 "status": meta.get("status", ""),
             })
 
+    tools = []
+    tool_root = REPO / "tools"
+    if tool_root.is_dir():
+        for p in sorted(tool_root.glob("*.py")):
+            if p.name.startswith("_"):
+                continue
+            # 同 stem 的启动器自动挂到这个工具名下，不硬编码文件名 ——
+            # 以后加工具只放文件，这里不用改。
+            launchers = sorted(
+                q.relative_to(REPO).as_posix()
+                for q in tool_root.iterdir()
+                if q.is_file() and q.stem == p.stem
+                and q.suffix.lower() in {".bat", ".cmd", ".sh", ".ps1"}
+            )
+            try:
+                size = len(normalize(p.read_bytes()))
+            except OSError:
+                size = 0
+            tools.append({
+                "name": p.stem,
+                "path": p.relative_to(REPO).as_posix(),
+                "summary": py_summary(p),
+                "launchers": launchers,
+                "bytes": size,
+                "sha256": digest(p),
+            })
+
     return {
         "generated_at": datetime.now(timezone.utc).astimezone().isoformat(timespec="seconds"),
         "entry": "AGENTS.md",
@@ -180,8 +226,10 @@ def collect() -> dict:
             "skills": len(skills),
             "ideas": len(notes["ideas"]),
             "decisions": len(notes["decisions"]),
+            "tools": len(tools),
         },
         "skills": skills,
+        "tools": tools,
         "ideas": notes["ideas"],
         "decisions": notes["decisions"],
     }
@@ -221,6 +269,18 @@ def check(fresh: dict, out: Path) -> int:
             for d in old_by_dir:
                 if d not in new_dirs:
                     print(f"  skills: 已删除 {d}")
+        elif key == "tools" and isinstance(a.get(key), list) and isinstance(b.get(key), list):
+            old_by_name = {t.get("name"): t for t in b[key]}
+            for t in a[key]:
+                o = old_by_name.get(t.get("name"))
+                if o is None:
+                    print(f"  tools: 新增 {t.get('name')}")
+                elif o != t:
+                    print(f"  tools: 变动 {t.get('name')}（内容或摘要改了）")
+            new_names = {t.get("name") for t in a[key]}
+            for n in old_by_name:
+                if n not in new_names:
+                    print(f"  tools: 已删除 {n}")
         else:
             print(f"  字段 {key}: manifest={str(b.get(key))[:120]} 实际={str(a.get(key))[:120]}")
     print("\n修复: 运行 python scripts/build_manifest.py 后提交 manifest.json")
@@ -239,7 +299,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.check:
         return check(manifest, out)
 
-    out.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    # 显式 LF：write_text 默认按 os.linesep 写，Windows 会产出 CRLF，
+    # 而 CI 在 Linux 上产出 LF —— 同一个文件两边字节数不同，制造假 diff。
+    out.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+                   encoding="utf-8", newline="\n")
     print(f"manifest.json written: {manifest['counts']}")
     return 0
 

@@ -67,11 +67,29 @@ def load_skills() -> list[tuple[str, str]]:
     return out
 
 
+def load_tools() -> list[tuple[str, str]]:
+    """工具名 + 摘要，取自 manifest.json 的 tools 数组（由 build_manifest 生成）。"""
+    mf = REPO / "manifest.json"
+    if not mf.is_file():
+        return []
+    try:
+        data = json.loads(mf.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return []
+    out = []
+    for t in data.get("tools", []):
+        name = t.get("name") or "?"
+        desc = re.sub(r"\s+", " ", t.get("summary") or "").strip()
+        out.append((name, desc))
+    return out
+
+
 def main() -> int:
     start_here = (REPO / "00-START-HERE.md").read_text(encoding="utf-8")
     profile = strip_frontmatter((REPO / "context" / "PROFILE.md").read_text(encoding="utf-8"))
     agents = strip_frontmatter((REPO / "AGENTS.md").read_text(encoding="utf-8"))
     skills = load_skills()
+    tools = load_tools()
 
     # AGENTS.md 里只摘「尖括号」说明出自 00-START-HERE；AGENTS 本身不进单文件版
     def section(text: str, title: str) -> str:
@@ -111,6 +129,23 @@ def main() -> int:
     A("")
     A("---")
     A("")
+
+    # 2.5) 随包小工具
+    # 单文件版的读者手上没有仓库，所以必须说清"文件不在你手上"，
+    # 否则它会去 `tools/` 找不存在的路径 —— 这正是 00-START-HERE 全文不能搬进来的原因。
+    if tools:
+        A("## 随包小工具（文件不在你手上）")
+        A("")
+        A("除了技能，仓库里还有能直接跑的独立脚本。**现在不在你手上**：需要时向我要；")
+        A("拿不到就按下面的描述实现，其中「原文件不动」和「已压过就跳过」是硬要求。")
+        A("")
+        A("| 工具 | 作用 |")
+        A("|---|---|")
+        for name, desc in tools:
+            A(f"| `{name}` | {desc} |")
+        A("")
+        A("---")
+        A("")
 
     # 3) 占位符分类
     # 只摘这一节。不能把 00-START-HERE 全文搬进来 —— 它讲的是「去读另外两个文件」，

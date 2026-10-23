@@ -4,7 +4,7 @@
 
 ## 只需要读 2 个文件
 
-1. **`AGENTS.md`** — 入口：任务路由表 + 技能调用约定 + 写作规范
+1. **`AGENTS.md`** — 入口：任务路由表 + 技能调用约定 + 随包工具 + 写作规范
 2. **`context/PROFILE.md`** — 作者的背景与沟通偏好
 
 读完这两个，再按任务去 `manifest.json` 里查具体技能。
@@ -24,6 +24,7 @@
 | 作者过去的判断与取舍 | `context/decisions/` |
 | 作者怎么表达、偏好什么 | `context/PROFILE.md` |
 | 有哪些想法还没落地 | `context/ideas/`（看 `status: draft`） |
+| 有现成小工具可用的动作 | `manifest.json` → `tools[]`，说明见 `tools/README.md` |
 
 ## 尖括号有两种，别搞混
 
