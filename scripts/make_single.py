@@ -138,6 +138,8 @@ def main() -> int:
     A("")
     A("只接受 `--command` / `--path` / `--output`，位置参数会报错；")
     A("只有 `.py` 是完整分析（含调用边），`.jsx/.tsx/.c/.cpp` 只能数行数。")
+    A("**要整个目录 5 个文件**——`run.py` 只是转发壳，只下它会报 "
+      "`ModuleNotFoundError: No module named 'main'`。")
     A("")
     A("---")
     A("")

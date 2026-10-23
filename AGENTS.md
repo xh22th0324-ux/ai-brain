@@ -26,20 +26,22 @@
 |---|---|
 | 有技能目录的宿主（WorkBuddy 等） | 复制 `skills/graphify/` 到宿主技能目录，如 `~/.workbuddy/skills/graphify` |
 | Claude Code / Codex CLI / Gemini CLI | 不用装，直接 `python3 skills/graphify/run.py …` |
-| 只拿到单文件说明、没有仓库文件 | 向作者索取这个目录（39 KB，5 个文本文件） |
+| 只拿到单文件说明、没有仓库文件 | 向作者索取**整个目录**（39 KB，5 个文本文件，缺一个都跑不起来） |
 
 ```bash
 python3 skills/graphify/run.py --selftest                            # 12 项全过才继续
 python3 skills/graphify/run.py --command report --path <TARGET_DIR>  # 建立结构认知
 ```
 
-三条实测提醒（不是推测，踩过）：
+四条实测提醒（不是推测，踩过）：
 
 1. 只接受 `--command` / `--path` / `--output`，**位置参数必报错**。`SKILL.md` 开头的
    「实测用法」节已覆盖上游文档里那套不存在的 `graphify init/index` 命令
 2. 真正的自检是 `run.py --selftest`；目录里的 `selftest.py` 自身有 bug，只报 `2/8 通过` 是假警报
 3. 只有 `.py` 是完整分析（含调用边）；`.js/.ts/.go/.rs/.java` 仅符号与 import；
    `.jsx/.tsx/.c/.cpp` 只能数行数——**别拿它给 C/C++ 出结构图**
+4. **必须拿整个目录（5 个文件）**：`run.py` 只是 9 行转发壳，实现在 `scripts/main.py`。
+   只下载 `run.py` 会报 `ModuleNotFoundError: No module named 'main'`
 
 ### 2. 读本文件（你在读）
 
