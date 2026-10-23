@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-10-23T11:51:18+08:00",
+  "generated_at": "2026-10-23T13:07:11+08:00",
   "entry": "AGENTS.md",
   "profile": "context/PROFILE.md",
   "counts": {
     "skills": 17,
     "ideas": 1,
-    "decisions": 1,
-    "tools": 1
+    "decisions": 2,
+    "tools": 3
   },
   "skills": [
     {
@@ -207,6 +207,22 @@
       ],
       "bytes": 20144,
       "sha256": "bcb07ac5d4be58fd"
+    },
+    {
+      "name": "hdd_sleep_diag",
+      "path": "tools/hdd_sleep_diag.sh",
+      "summary": "iStoreOS / OpenWrt 外挂硬盘休眠体检",
+      "launchers": [],
+      "bytes": 12449,
+      "sha256": "6d4fa9f07924675b"
+    },
+    {
+      "name": "set_sleep",
+      "path": "tools/set_sleep.sh",
+      "summary": "设置并固化外挂硬盘的空闲休眠时间",
+      "launchers": [],
+      "bytes": 6679,
+      "sha256": "ea3be5ccbe24f952"
     }
   ],
   "ideas": [
@@ -234,6 +250,21 @@
         "winrar",
         "docker",
         "排障"
+      ],
+      "status": "settled"
+    },
+    {
+      "title": "NAS 外挂硬盘休眠用固件计时器，不装插件",
+      "slug": "2026-10-23-NAS外挂硬盘休眠用固件计时器不装插件",
+      "path": "context/decisions/2026-10-23-NAS外挂硬盘休眠用固件计时器不装插件.md",
+      "date": "2026-10-23",
+      "tags": [
+        "nas",
+        "硬盘",
+        "休眠",
+        "hdparm",
+        "排障",
+        "istoreos"
       ],
       "status": "settled"
     }

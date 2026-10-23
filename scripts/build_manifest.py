@@ -150,6 +150,34 @@ def py_summary(path: Path) -> str:
     return ""
 
 
+def sh_summary(path: Path) -> str:
+    """从 shell 脚本头部的注释块里取用途摘要。
+
+    约定格式（注释块里任意一行）：
+        #  名字  —  一句话说明
+    取破折号之后的部分。找不到破折号就退回第一行有效注释。
+    """
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return ""
+    for line in text.splitlines()[:25]:
+        s = line.strip()
+        if not s.startswith("#") or s.startswith("#!"):
+            continue
+        body = s.lstrip("#").strip()
+        # 跳过纯分隔线（====、---- 之类）
+        if not body or set(body) <= set("= -_*#"):
+            continue
+        for sep in ("—", "——", " - "):
+            if sep in body:
+                tail = body.split(sep, 1)[1].strip()
+                if tail:
+                    return tail
+        return body
+    return ""
+
+
 def collect() -> dict:
     """扫描仓库，生成清单（不含写盘副作用）。"""
     skills = []
@@ -194,7 +222,9 @@ def collect() -> dict:
     tools = []
     tool_root = REPO / "tools"
     if tool_root.is_dir():
-        for p in sorted(tool_root.glob("*.py")):
+        # 主脚本可以是 Python，也可以是 shell（NAS/Linux 场景 .sh 更顺手）
+        mains = sorted(tool_root.glob("*.py")) + sorted(tool_root.glob("*.sh"))
+        for p in mains:
             if p.name.startswith("_"):
                 continue
             # 同 stem 的启动器自动挂到这个工具名下，不硬编码文件名 ——
@@ -202,7 +232,7 @@ def collect() -> dict:
             launchers = sorted(
                 q.relative_to(REPO).as_posix()
                 for q in tool_root.iterdir()
-                if q.is_file() and q.stem == p.stem
+                if q.is_file() and q != p and q.stem == p.stem
                 and q.suffix.lower() in {".bat", ".cmd", ".sh", ".ps1"}
             )
             try:
@@ -212,7 +242,7 @@ def collect() -> dict:
             tools.append({
                 "name": p.stem,
                 "path": p.relative_to(REPO).as_posix(),
-                "summary": py_summary(p),
+                "summary": py_summary(p) if p.suffix == ".py" else sh_summary(p),
                 "launchers": launchers,
                 "bytes": size,
                 "sha256": digest(p),
