@@ -19,15 +19,23 @@ author: LingGraph Studio
 python run.py --selftest                                          # 装完先跑，12 项全过才算正常
 python run.py --command report  --path <TARGET_DIR>               # 人读摘要
 python run.py --command scan    --path <TARGET_DIR> --output graph.json  # 机器读
-python run.py --command mermaid --path <TARGET_DIR>               # 出 Mermaid 图
+# python run.py --command mermaid --path <TARGET_DIR>             # 坏掉了，别用（见下）
 ```
 
 - 纯 Python 标准库：**不需要 pip install，不需要 API key，不联网**
 - 参数只接受 `--command` / `--path` / `--output`，**不接受位置参数**
   （`run.py scan ./src` 会报 `unrecognized arguments`）
-- 分析深度分三档，别高估：`.py` **完整**（函数、类、import、调用边）；
-  `.js .ts .go .rs .java` 只有符号名与 import，**调用边恒为空**；
-  `.jsx .tsx .c .cpp` 只能统计行数。**不要用它给 C/C++ 出结构图**
+- **它没有调用图，任何语言都没有**。`analyze_python` 确实提取了 `calls`，
+  但 `build_graph()` 组装 node 时只取 id/lang/lines/functions/classes/imports，
+  **把 calls 丢掉了**；edges 也只由 imports 生成，从不产生调用边。
+  因此全库所有边都是 `{"type": "import"}`，`to` 只是 import 进来的名字
+  （`from b import helper` → `to: "helper"`），**不做名字解析**，分不清
+  「同目录 b.py」和「pip 装的 b」。要调用链/架构图请换工具
+- 分析深度分三档：`.py` → 函数名、类名、import 名列表；`.js .ts .go .rs .java` →
+  正则近似，只有符号名与 import；`.jsx .tsx .c .cpp` → 仅行数与语言标签
+- `--command mermaid` **是坏的**：单层目录会把节点写成 `(root)[(root)]`，
+  Mermaid 不接受带括号的 id，渲染报语法错；有子目录时退化成「目录 → 第三方库」的
+  噪音图，还会因空 import 产生 `scripts -->` 空节点。要图请自己读 `scan` 的 JSON
 - 目录里的 `selftest.py` 自身有缺陷（它检查 `run.py` 上的属性，而实现在
   `scripts/main.py`），只显示 `2/8 通过` 属**假警报**，请以 `run.py --selftest` 为准
 

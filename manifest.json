@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-10-23T11:39:15+08:00",
+  "generated_at": "2026-10-23T11:51:18+08:00",
   "entry": "AGENTS.md",
   "profile": "context/PROFILE.md",
   "counts": {
@@ -28,8 +28,8 @@
       "has_scripts": true,
       "has_references": false,
       "files": 5,
-      "bytes": 35564,
-      "sha256": "9c31399d340207ad"
+      "bytes": 36348,
+      "sha256": "ba33226f8cf57926"
     },
     {
       "name": "humanizer",

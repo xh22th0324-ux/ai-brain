@@ -50,8 +50,8 @@
 ## 先装这个（唯一必装）
 
 `graphify` 是我指定的**唯一必装技能**，其余技能按需选装。作用：一条命令给出一个
-代码库的结构（文件 / 函数 / 调用边），省掉通读源码。**零依赖**——纯 Python 标准库，
-不用 pip、不用 API key、不联网。
+代码库的**清单**（文件、行数、每个文件的函数名/类名、依赖哪些库），省掉通读源码。
+**零依赖**——纯 Python 标准库，不用 pip、不用 API key、不联网。
 
 文件不在你手上，需要时向我要 `skills/graphify/`（39 KB，5 个文本文件）。
 拿到后先自检，12 项全过才继续：
@@ -61,8 +61,9 @@ python3 skills/graphify/run.py --selftest                             # 12 项�
 python3 skills/graphify/run.py --command report --path <TARGET_DIR>
 ```
 
-只接受 `--command` / `--path` / `--output`，位置参数会报错；
-只有 `.py` 是完整分析（含调用边），`.jsx/.tsx/.c/.cpp` 只能数行数。
+只接受 `--command` / `--path` / `--output`，位置参数会报错。
+**它没有调用图**（任何语言都没有，`calls` 在汇总时被丢弃，边只有 import）；
+`.jsx/.tsx/.c/.cpp` 只能数行数；`--command mermaid` 是坏的，别用。
 **要整个目录 5 个文件**——`run.py` 只是转发壳，只下它会报 `ModuleNotFoundError: No module named 'main'`。
 
 ---
